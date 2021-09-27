@@ -1,0 +1,93 @@
+{
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "count",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "get_data",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "x",
+          "type": "uint256"
+        }
+      ],
+      "name": "set_data",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "increase",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
+      "name": "Increase",
+      "type": "event"
+    }
+  ],
+  "bytecode": "608060405234801561001057600080fd5b50336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550610239806100606000396000f3fe60806040526004361061006d576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806306661abd1461007257806350bf8b0d1461009d5780638da5cb5b146100c8578063b6c3b8051461011f578063e8927fbc1461015a575b600080fd5b34801561007e57600080fd5b50610087610171565b6040518082815260200191505060405180910390f35b3480156100a957600080fd5b506100b2610177565b6040518082815260200191505060405180910390f35b3480156100d457600080fd5b506100dd610181565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561012b57600080fd5b506101586004803603602081101561014257600080fd5b81019080803590602001909291905050506101a6565b005b34801561016657600080fd5b5061016f6101b0565b005b60015481565b6000600254905090565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b8060028190555050565b60018054016001819055503373ffffffffffffffffffffffffffffffffffffffff167f12007e72f6f07d1e7dd33219d5187184ceba138e79459b6c241cec9a9399fe0c6001546040518082815260200191505060405180910390a256fea165627a7a7230582010050a94ece751267ff019081dfb0a535350aac18363d55b1e6ef677aced98670029"
+}
