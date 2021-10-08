@@ -1,5 +1,5 @@
 from web3 import Web3
-from src.config import ContractConfig, Config
+from src.web3.config import ContractConfig, Config
 
 
 def run_contract():

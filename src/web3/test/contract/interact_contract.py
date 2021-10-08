@@ -1,5 +1,5 @@
 from web3 import Web3
-from src.config import ContractConfig, Config
+from src.web3.config import ContractConfig, Config
 
 contract_address = "0x4dbCAf20808da752D0aD337ad44de05d0A678093"
 
