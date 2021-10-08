@@ -1,2 +1,2 @@
-[10-08 15:28:43] p37907 {/Users/phamhongphuc/Documents/WORK/other/PythonPractice/src/logging/test_logging.py:26} ERROR - This is error console
-[10-08 15:28:43] p37907 {/Users/phamhongphuc/Documents/WORK/other/PythonPractice/src/logging/test_logging.py:27} CRITICAL - This is critical console
+[38;21m2021-10-08 17:26:22,561 - my_logger - INFO - 12345 (test_logging.py:35)[0m
+[31;21m2021-10-08 17:26:22,561 - my_logger - ERROR - 123455555 (test_logging.py:36)[0m
