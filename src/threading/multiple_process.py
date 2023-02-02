@@ -13,9 +13,9 @@ def _counter(counter, task_name):
 def _submit_process():
     executor = ProcessPoolExecutor(max_workers=5)
     future = executor.submit(_counter, 10, "task1")
-    print('State of future: ', future.done())
-    print('futre result: ', future.result())
-    print('State of future: ', future.done())
+    print("State of future: ", future.done())
+    print("futre result: ", future.result())
+    print("State of future: ", future.done())
 
 
 _submit_process()

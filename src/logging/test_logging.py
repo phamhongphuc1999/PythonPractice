@@ -13,7 +13,8 @@ def setup_trava_logging(file_log_level=INFO, console_log_level=DEBUG):
     :param console_log_level: The console log level
     """
     log_formatter = logging.Formatter(
-        '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s', '%m-%d %H:%M:%S')
+        "[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s", "%m-%d %H:%M:%S"
+    )
 
     custom_formatter = CustomFormatter()
 

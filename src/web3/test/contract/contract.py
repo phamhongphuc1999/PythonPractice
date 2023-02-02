@@ -8,12 +8,14 @@ def run_contract():
     # get provider
     web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
 
-    contract = web3.eth.contract(abi=simple_interface['abi'], bytecode=simple_interface['bytecode'])
+    contract = web3.eth.contract(abi=simple_interface["abi"], bytecode=simple_interface["bytecode"])
 
-    tx_hash = contract.constructor().buildTransaction({
-        "from": Config.ACCOUNT_ADDRESS,
-        "nonce": web3.eth.getTransactionCount(Config.ACCOUNT_ADDRESS),
-    })
+    tx_hash = contract.constructor().buildTransaction(
+        {
+            "from": Config.ACCOUNT_ADDRESS,
+            "nonce": web3.eth.getTransactionCount(Config.ACCOUNT_ADDRESS),
+        }
+    )
 
     tx_create = web3.eth.account.signTransaction(tx_hash, Config.PRIVATE_KEY)
 
@@ -21,4 +23,4 @@ def run_contract():
     tx_receipt = web3.eth.waitForTransactionReceipt(tx_hash)
 
     print("tx receipt", tx_receipt)
-    print("contract address", tx_receipt['contractAddress'])
+    print("contract address", tx_receipt["contractAddress"])
