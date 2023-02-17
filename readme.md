@@ -1,8 +1,11 @@
-<!-- AUTO-GENERATED-CONTENT:START (STARTER) -->
 <h1 align="center">
-    BLOCKCHAIN PRACTICE
+  PYTHON PRACTICE
 </h1>
 
 ---
-### Reference
-- https://viblo.asia/p/json-rpc-khi-khong-con-phai-phu-thuoc-vao-web3-07LKXy4pZV4
+
+| Thư mục                      | Ý nghĩa                      |
+| :--------------------------- | :--------------------------- |
+| [Simple App](./SimpleApp/)   | API đơn giản viết bằng Sanic |
+| [Telegram Bot](./tele-bot/)  | Telegram Bot client          |
+| [NLP Backend](./NLPBackend/) | Backend của môn NLP          |

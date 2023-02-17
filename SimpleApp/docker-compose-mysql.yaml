@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  mysql_container:
+    image: mysql:latest
+    container_name: "dev_sanic_sql_container"
+    environment:
+      MYSQL_ROOT_PASSWORD: sanic
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./sql/setup.sql:/docker-entrypoint-initdb.d/1.sql"
