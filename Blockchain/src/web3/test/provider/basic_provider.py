@@ -13,7 +13,9 @@ def run_provider():
     # get a block by it's hash
     print(
         "get a block by it's hash",
-        web3.eth.get_block("0x05c7011215ba400f41d13856fac57043d6a3c8a9eb1fe8fa66730d1e6f1c6b9b"),
+        web3.eth.get_block(
+            "0x05c7011215ba400f41d13856fac57043d6a3c8a9eb1fe8fa66730d1e6f1c6b9b"
+        ),
     )
 
     # get account balance

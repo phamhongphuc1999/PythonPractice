@@ -7,7 +7,9 @@ from app.services.logger_service import app_logger
 
 
 class ConnectionOption:
-    def __init__(self, host: str, port: str, username: str, password: str, database: str):
+    def __init__(
+        self, host: str, port: str, username: str, password: str, database: str
+    ):
         self.host = host
         self.port = port
         self.username = username

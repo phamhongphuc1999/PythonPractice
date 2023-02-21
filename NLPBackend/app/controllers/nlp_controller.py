@@ -18,7 +18,13 @@ async def tokenize(request):
         body = await get_body_request(request)
         _tokenize_data = tokenize_stories(body["story"])
         _article_data = get_article(_tokenize_data)
-        return json_response({"story": body["story"], "tokenize": _tokenize_data, "article": _article_data})
+        return json_response(
+            {
+                "story": body["story"],
+                "tokenize": _tokenize_data,
+                "article": _article_data,
+            }
+        )
     except Exception as error:
         return json_response({"status": 0, "error": str(error)})
 

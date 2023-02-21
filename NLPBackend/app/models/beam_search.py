@@ -25,7 +25,12 @@ class _Hypothesis(object):
         else:
             attns = self.attns + [attn]
         return [
-            _Hypothesis(self.sequence + [t.item()], self.logprob + lp.item() - diverse * i, hists, attns)
+            _Hypothesis(
+                self.sequence + [t.item()],
+                self.logprob + lp.item() - diverse * i,
+                hists,
+                attns,
+            )
             for i, (t, lp) in enumerate(zip(topk, logprobs))
         ]
 
@@ -48,16 +53,24 @@ def pack_beam(hyps, device):
     """pack a list of hypothesis to decoder input batches"""
     token = torch.LongTensor([h.sequence[-1] for h in hyps])
 
-    hists = tuple(torch.stack([hyp.hists[i] for hyp in hyps], dim=d) for i, d in enumerate([1, 1, 0]))
+    hists = tuple(
+        torch.stack([hyp.hists[i] for hyp in hyps], dim=d)
+        for i, d in enumerate([1, 1, 0])
+    )
     token = token.to(device)
     states = ((hists[0], hists[1]), hists[2])
     return token, states
 
 
-def next_search_beam(beam, beam_size, finished, end, topk, lp, hists, attn=None, diverse=1.0):
+def next_search_beam(
+    beam, beam_size, finished, end, topk, lp, hists, attn=None, diverse=1.0
+):
     """generate the next beam(K-best hyps)"""
     topks, lps, hists_list, attns = _unpack_topk(topk, lp, hists, attn)
-    hyps_lists = [h.extend_k(topks[i], lps[i], hists_list[i], attns[i], diverse) for i, h in enumerate(beam)]
+    hyps_lists = [
+        h.extend_k(topks[i], lps[i], hists_list[i], attns[i], diverse)
+        for i, h in enumerate(beam)
+    ]
     hyps = list(concat(hyps_lists))
     finished, beam = _clean_beam(finished, hyps, end, beam_size)
 
@@ -86,7 +99,9 @@ def _unpack_topk(topk, lp, hists, attn=None):
     beam, _ = topk.size()
     topks = [t for t in topk]
     lps = [l for l in lp]
-    k_hists = [(hists[0][:, i, :], hists[1][:, i, :], hists[2][i, :]) for i in range(beam)]
+    k_hists = [
+        (hists[0][:, i, :], hists[1][:, i, :], hists[2][i, :]) for i in range(beam)
+    ]
 
     if attn is None:
         return topks, lps, k_hists

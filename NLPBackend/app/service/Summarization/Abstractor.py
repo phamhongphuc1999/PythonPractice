@@ -41,7 +41,16 @@ class Abstractor(object):
         extend_arts = conver2id(UNK, ext_word2id, raw_article_sents)
         extend_art = pad_batch_tensorize(extend_arts, PAD, cuda=False).to(self._device)
         extend_vsize = len(ext_word2id)
-        dec_args = (article, art_lens, extend_art, extend_vsize, START, END, UNK, self._max_len)
+        dec_args = (
+            article,
+            art_lens,
+            extend_art,
+            extend_vsize,
+            START,
+            END,
+            UNK,
+            self._max_len,
+        )
         return dec_args, ext_id2word
 
     def __call__(self, raw_article_sents):
@@ -72,7 +81,9 @@ def _process_beam(id2word, beam, art_sent):
         seq = []
         for i, attn in zip(hyp.sequence[1:], hyp.attns[:-1]):
             if i == UNK:
-                copy_word = art_sent[max(range(len(art_sent)), key=lambda j: attn[j].item())]
+                copy_word = art_sent[
+                    max(range(len(art_sent)), key=lambda j: attn[j].item())
+                ]
                 seq.append(copy_word)
             else:
                 seq.append(id2word[i])
@@ -90,5 +101,7 @@ class BeamAbstractor(Abstractor):
         dec_args, id2word = self._prepro(raw_article_sents)
         dec_args = (*dec_args, beam_size, diverse)
         all_beams = self._net.batched_beamsearch(*dec_args)
-        all_beams = list(starmap(_process_beam(id2word), zip(all_beams, raw_article_sents)))
+        all_beams = list(
+            starmap(_process_beam(id2word), zip(all_beams, raw_article_sents))
+        )
         return all_beams

@@ -15,7 +15,9 @@ class _ModelGetter:
             username = AppConfig.Global.SQL.USER_NAME
             password = AppConfig.Global.SQL.PASSWORD
             database = AppConfig.Global.SQL.DATABASE_NAME
-            self._connection = BaseConnector(ConnectionOption(host, port, username, password, database))
+            self._connection = BaseConnector(
+                ConnectionOption(host, port, username, password, database)
+            )
 
     def get_model(self) -> TableModel:
         if self._connection is None:

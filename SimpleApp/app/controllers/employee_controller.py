@@ -16,7 +16,9 @@ async def register_user(request: Request):
         username = body["username"]
         password = body["password"]
         email = body["email"]
-        result = ModelGetter.get_model().employee.add_new_user(username, password, email)
+        result = ModelGetter.get_model().employee.add_new_user(
+            username, password, email
+        )
         return ok_json(result)
     except Exception as error:
         return bad_request_json(str(error))
@@ -29,7 +31,9 @@ async def login_app(request: Request):
         body = request.json
         username = body["username"]
         password = body["password"]
-        user_data = ModelGetter.get_model().employee.get_employee_by_username_password(username, password)
+        user_data = ModelGetter.get_model().employee.get_employee_by_username_password(
+            username, password
+        )
         return ok_json({"data": user_data})
     except Exception as error:
         return bad_request_json(str(error))

@@ -64,7 +64,9 @@ def rerank_mp(all_beams, ext_inds):
     return list(concat(reranked))
 
 
-def decode_more(save_path, model_dir, split, batch_size, beam_size, diverse, max_len, cuda):
+def decode_more(
+    save_path, model_dir, split, batch_size, beam_size, diverse, max_len, cuda
+):
     start = time()
     # setup model
     with open(join(model_dir, "meta.json")) as f:
@@ -82,7 +84,9 @@ def decode_more(save_path, model_dir, split, batch_size, beam_size, diverse, max
     extractor = RLExtractor(model_dir, cuda=cuda)
     dataset = DecodeDataset(split)
     n_data = len(dataset)
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=4, collate_fn=coll)
+    loader = DataLoader(
+        dataset, batch_size=batch_size, shuffle=False, num_workers=4, collate_fn=coll
+    )
 
     # prepare save paths and logs
     os.makedirs(join(save_path, "output"))
@@ -126,7 +130,10 @@ def decode_more(save_path, model_dir, split, batch_size, beam_size, diverse, max
                 i += 1
                 print(
                     "{}/{} ({:.2f}%) decoded in {} seconds\r".format(
-                        i, n_data, i / n_data * 100, timedelta(seconds=int(time() - start))
+                        i,
+                        n_data,
+                        i / n_data * 100,
+                        timedelta(seconds=int(time() - start)),
                     ),
                     end="",
                 )

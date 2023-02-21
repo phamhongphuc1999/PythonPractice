@@ -4,8 +4,8 @@
 
 ---
 
-| Thư mục                      | Ý nghĩa                      |
-| :--------------------------- | :--------------------------- |
-| [Simple App](./SimpleApp/)   | API đơn giản viết bằng Sanic |
-| [Telegram Bot](./tele-bot/)  | Telegram Bot client          |
-| [NLP Backend](./NLPBackend/) | Backend của môn NLP          |
+| Thư mục                     | Ý nghĩa                      |
+|:----------------------------|:-----------------------------|
+| [Simple App](./SimpleApp)   | API đơn giản viết bằng Sanic |
+| [Blockchain](./Blockchain)  | Tương tác với blockchain     |
+| [NLP Backend](./NLPBackend) | Backend của môn NLP          |

@@ -15,7 +15,9 @@ class TelegramApi:
     @staticmethod
     def request(method: str, url: str, *args, **kwargs):
         print(f"{TelegramApi.BASE_URL}{url}")
-        response = requests.request(method=method, url=f"{TelegramApi.BASE_URL}{url}", *args, **kwargs)
+        response = requests.request(
+            method=method, url=f"{TelegramApi.BASE_URL}{url}", *args, **kwargs
+        )
         _data = json.loads(response.text)
         if _data["ok"]:
             return _data["result"]
@@ -112,7 +114,9 @@ async def get_bots(request: Request):
         if method is None:
             method = "getChat"
         elif method not in TELEGRAM_GET_METHODS:
-            raise Exception(f"Not found get method: {method}. Method must be in {TELEGRAM_GET_METHODS}")
+            raise Exception(
+                f"Not found get method: {method}. Method must be in {TELEGRAM_GET_METHODS}"
+            )
         params = _build_params(chat_id=request.args.get("chatId"))
         result = TelegramApi.get(f"{bot_id}/{method}", params=params)
         return ok_json(result)

@@ -31,7 +31,10 @@ class RLExtractor(object):
         word2id = pkl.load(open(join(ext_dir, "agent_vocab.pkl"), "rb"))
         extractor = PtrExtractSumm(**ext_args)
         agent = ActorCritic(
-            extractor._sent_enc, extractor._art_enc, extractor._extractor, ArticleBatcher(word2id, cuda)
+            extractor._sent_enc,
+            extractor._art_enc,
+            extractor._extractor,
+            ArticleBatcher(word2id, cuda),
         )
         ext_ckpt = load_best_ckpt(ext_dir, reverse=True)
         agent.load_state_dict(ext_ckpt)

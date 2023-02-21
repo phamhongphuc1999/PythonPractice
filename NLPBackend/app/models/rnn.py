@@ -133,7 +133,9 @@ class MultiLayerLSTMCells(StackedLSTMCells):
     @staticmethod
     def convert(lstm):
         """convert from a cudnn LSTM"""
-        lstm_cell = MultiLayerLSTMCells(lstm.input_size, lstm.hidden_size, lstm.num_layers, dropout=lstm.dropout)
+        lstm_cell = MultiLayerLSTMCells(
+            lstm.input_size, lstm.hidden_size, lstm.num_layers, dropout=lstm.dropout
+        )
         for i, cell in enumerate(lstm_cell._cells):
             cell.weight_ih.data.copy_(getattr(lstm, "weight_ih_l{}".format(i)))
             cell.weight_hh.data.copy_(getattr(lstm, "weight_hh_l{}".format(i)))

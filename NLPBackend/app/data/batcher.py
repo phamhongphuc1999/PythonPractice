@@ -207,7 +207,16 @@ def _batch2q(loader, prepro, q, single_run=True):
 
 
 class BucketedGenerater(object):
-    def __init__(self, loader, prepro, sort_key, batchify, single_run=True, queue_size=8, fork=True):
+    def __init__(
+        self,
+        loader,
+        prepro,
+        sort_key,
+        batchify,
+        single_run=True,
+        queue_size=8,
+        fork=True,
+    ):
         self._loader = loader
         self._prepro = prepro
         self._sort_key = sort_key
@@ -236,7 +245,8 @@ class BucketedGenerater(object):
         if self._queue is not None:
             ctx = mp.get_context("forkserver")
             self._process = ctx.Process(
-                target=_batch2q, args=(self._loader, self._prepro, self._queue, self._single_run)
+                target=_batch2q,
+                args=(self._loader, self._prepro, self._queue, self._single_run),
             )
             self._process.start()
             while True:

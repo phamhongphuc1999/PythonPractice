@@ -9,7 +9,18 @@ END = 3
 dm_single_close_quote = "\u2019"  # unicode
 dm_double_close_quote = "\u201d"
 # acceptable ways to end a sentence
-END_TOKENS = [".", "!", "?", "...", "'", "`", '"', dm_single_close_quote, dm_double_close_quote, ")"]
+END_TOKENS = [
+    ".",
+    "!",
+    "?",
+    "...",
+    "'",
+    "`",
+    '"',
+    dm_single_close_quote,
+    dm_double_close_quote,
+    ")",
+]
 
 
 def tokenize_stories(story: str):
@@ -18,8 +29,16 @@ def tokenize_stories(story: str):
     stories = os.listdir("story")
     with open("mapping.txt", "w") as f:
         for s in stories:
-            f.write("{} \t {}\n".format(os.path.join("story", s), os.path.join("story1", s)))
-    command = ["java", "edu.stanford.nlp.process.PTBTokenizer", "-ioFileList", "-preserveLines", "mapping.txt"]
+            f.write(
+                "{} \t {}\n".format(os.path.join("story", s), os.path.join("story1", s))
+            )
+    command = [
+        "java",
+        "edu.stanford.nlp.process.PTBTokenizer",
+        "-ioFileList",
+        "-preserveLines",
+        "mapping.txt",
+    ]
     subprocess.call(command)
     os.remove("mapping.txt")
     f = open("story1/story.txt", "r")

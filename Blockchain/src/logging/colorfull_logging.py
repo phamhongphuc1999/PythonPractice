@@ -1,7 +1,22 @@
 import logging
-from color_config import fgCyan, fgWhite, fgGreen, fgYellow, fgRed, reset, bold, fgMagenta
+from color_config import (
+    fgCyan,
+    fgWhite,
+    fgGreen,
+    fgYellow,
+    fgRed,
+    reset,
+    bold,
+    fgMagenta,
+)
 
-COLORS = {"DEBUG": fgWhite, "INFO": fgGreen, "WARNING": fgYellow, "ERROR": fgRed, "CRITICAL": fgMagenta}
+COLORS = {
+    "DEBUG": fgWhite,
+    "INFO": fgGreen,
+    "WARNING": fgYellow,
+    "ERROR": fgRed,
+    "CRITICAL": fgMagenta,
+}
 
 
 class ColoredFormatter(logging.Formatter):
@@ -19,9 +34,7 @@ class ColoredFormatter(logging.Formatter):
 
 # Custom logger class with multiple destinations
 class ColoredLogger(logging.Logger):
-    FORMAT = (
-        f"{bold}[%(asctime)s]{reset} %(levelname)s: {bold}%(message)s{reset} {fgCyan}(%(filename)s:%(lineno)d){reset}"
-    )
+    FORMAT = f"{bold}[%(asctime)s]{reset} %(levelname)s: {bold}%(message)s{reset} {fgCyan}(%(filename)s:%(lineno)d){reset}"
 
     def __init__(self, name):
         logging.Logger.__init__(self, name, logging.DEBUG)
