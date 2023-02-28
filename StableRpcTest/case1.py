@@ -1,8 +1,6 @@
 import sys
 import time
-
 from stable_ethereum_rpc.stable_web3 import StableWeb3
-
 from config import BscConfig, FtmConfig, BEP20_ABI, EthConfig
 from service.logger_service import get_logger
 from service.telegram_service import send_telegram_message
@@ -18,10 +16,8 @@ def run(_stable_web3, token_address, text: str, app_logger, bot_id, chat_id):
         f"{text} Set best web3======================================================="
     )
     result1 = _stable_web3.set_best_web3()
-    bep_contract = (
-        _stable_web3.web3()
-        .get_web3()
-        .eth.contract(address=token_address, abi=BEP20_ABI)
+    bep_contract = _stable_web3.web3().eth.contract(
+        address=token_address, abi=BEP20_ABI
     )
     token_balance = bep_contract.functions.balanceOf(
         "0x871DBcE2b9923A35716e7E83ee402B535298538E"

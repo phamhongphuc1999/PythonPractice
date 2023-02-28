@@ -32,6 +32,6 @@ then
 fi
 
 printf "${Green}Step 5: Run new container${NC}\n"
-docker run -d --name $CONTAINER_NAME $IMAGE_NAME:v1 $1 $2
+docker run -d --name $CONTAINER_NAME $IMAGE_NAME:v1 $1 $2 $3
 
 echo Finish!!
