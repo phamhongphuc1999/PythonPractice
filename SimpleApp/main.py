@@ -31,10 +31,10 @@ if __name__ == "__main__":
         env = get_env()
         AppConfig.init_env(env)
         if env == EnvironmentType.DEV_DOCKER:
-            ModelGetter.connect()
+            ModelGetter.SQL.connect()
             run_server()
         elif env == EnvironmentType.DEVELOPMENT:
-            ModelGetter.connect()
+            ModelGetter.SQL.connect()
             run_server(True)
         elif env == EnvironmentType.BASIC:
             run_server(True)

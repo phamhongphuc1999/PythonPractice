@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  mongodb_container:
+    image: mongo:latest
+    container_name: "dev_bridge_mongo_container_v3"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: bridge
+      MONGO_INITDB_ROOT_PASSWORD: bridge2021
+    ports:
+      - 27013:27017
+    volumes:
+      - mongodb_bridge_container:/data/db
+
+volumes:
+  mongodb_bridge_container:

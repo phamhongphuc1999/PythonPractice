@@ -3,6 +3,8 @@ from typing import Union
 import mysql.connector
 from mysql.connector import errorcode, CMySQLConnection, MySQLConnection
 from mysql.connector.cursor import MySQLCursor
+from pymongo import MongoClient
+
 from app.services.logger_service import app_logger
 
 
@@ -20,6 +22,40 @@ class ConnectionOption:
 class BaseConnector:
     def __init__(self, option: ConnectionOption):
         self.option = option
+
+
+class MongoBaseConnector(BaseConnector):
+    def __init__(self, option: ConnectionOption):
+        super().__init__(option)
+        self._connect()
+
+    def _connect(self):
+        try:
+            host = self.option.host
+            port = self.option.port
+            username = self.option.username
+            password = self.option.password
+            database = self.option.database
+            self._connection = MongoClient(
+                host=host, port=port, username=username, password=password
+            )
+            if self._connection.server_info():
+                app_logger.info(f"Connected to database: {host}:{port}")
+            else:
+                raise Exception("Connection to mongodb fail")
+        except Exception as err:
+            raise err
+
+    def reconnect(self):
+        self._connect()
+
+    def get_connection(self) -> MongoClient:
+        return self._connection
+
+
+class SqlBaseConnector(BaseConnector):
+    def __init__(self, option: ConnectionOption):
+        super().__init__(option)
         self._connect()
 
     def _connect(self):

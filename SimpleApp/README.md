@@ -59,6 +59,8 @@ You can run the project on your local environment with these steps:
     make help
     ```
 
+- After your app ran, you can follow [here](http://0.0.0.0:8000/swagger/) to test api
+
 ---
 
 ### Database testing

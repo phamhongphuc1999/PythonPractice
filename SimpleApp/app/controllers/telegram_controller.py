@@ -47,7 +47,7 @@ def _build_params(**kwargs):
     return params
 
 
-telegram_blueprint = Blueprint("telegram_blueprint", url_prefix="/telegram")
+telegram_blueprint = Blueprint("Telegram", url_prefix="/telegram")
 
 
 @telegram_blueprint.get("/getUpdates")

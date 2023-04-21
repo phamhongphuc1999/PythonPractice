@@ -6,7 +6,7 @@ from app.apis.api_response import bad_request_json, ok_json
 from app.config.constant import Network
 from app.contract.bep20_contract import Bep20Contract
 
-bep20_blueprint = Blueprint("bep20_blueprint", url_prefix="/bep20")
+bep20_blueprint = Blueprint("Bep20", url_prefix="/bep20")
 
 
 @bep20_blueprint.get("/networks")

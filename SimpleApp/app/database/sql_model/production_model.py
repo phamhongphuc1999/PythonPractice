@@ -1,14 +1,14 @@
 import mysql.connector
-from app.database.base_connector import BaseConnector, ConnectionOption
-from app.database.model.base_model import BaseModel
+from app.database.base_connector import SqlBaseConnector, ConnectionOption
+from app.database.base_model import SqlBaseModel
 from app.services.logger_service import app_logger
 
 GET_PRODUCTION_SCRIPT = "SELECT * FROM Production WHERE name = '{name}';"
 
 
-class ProductionModel(BaseModel):
+class ProductionModel(SqlBaseModel):
     def __init__(
-        self, connection: BaseConnector = None, option: ConnectionOption = None
+        self, connection: SqlBaseConnector = None, option: ConnectionOption = None
     ):
         super().__init__(connection, option)
 

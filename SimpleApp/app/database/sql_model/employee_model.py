@@ -1,8 +1,8 @@
 import mysql.connector
 
-from app.database.model.base_model import BaseModel
+from app.database.base_model import SqlBaseModel
 from app.services.logger_service import app_logger
-from app.database.base_connector import BaseConnector, ConnectionOption
+from app.database.base_connector import SqlBaseConnector, ConnectionOption
 
 ADD_USER_SCRIPT = "INSERT INTO Employees (username, password, email) VALUE ({username}, {password}, {email});"
 GET_USER_SCRIPT = (
@@ -10,9 +10,9 @@ GET_USER_SCRIPT = (
 )
 
 
-class EmployeeModel(BaseModel):
+class EmployeeModel(SqlBaseModel):
     def __init__(
-        self, connection: BaseConnector = None, option: ConnectionOption = None
+        self, connection: SqlBaseConnector = None, option: ConnectionOption = None
     ):
         super().__init__(connection, option)
 
