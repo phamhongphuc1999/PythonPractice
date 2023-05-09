@@ -19,7 +19,5 @@ def load_best_ckpt(model_dir, reverse=False):
         key=lambda c: float(c.split("-")[1]),
         reverse=reverse,
     )
-    ckpt = torch.load(
-        join(model_dir, "ckpt/{}".format(ckpts[0])), map_location=torch.device("cpu")
-    )["state_dict"]
+    ckpt = torch.load(join(model_dir, "ckpt/{}".format(ckpts[0])), map_location=torch.device("cpu"))["state_dict"]
     return ckpt

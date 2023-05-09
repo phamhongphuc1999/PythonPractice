@@ -4,8 +4,8 @@ from app.database.base_connector import (
     ConnectionOption,
     MongoBaseConnector,
 )
-from app.database.mongo_model import CollectionModel
-from app.database.sql_model import TableModel
+from app.database.mongo_model import MongoModel
+from app.database.sql_model import SqlModel
 
 
 class _SqlGetter:
@@ -20,15 +20,13 @@ class _SqlGetter:
             username = AppConfig.Global.SQL.USER_NAME
             password = AppConfig.Global.SQL.PASSWORD
             database = AppConfig.Global.SQL.DATABASE_NAME
-            self._connection = SqlBaseConnector(
-                ConnectionOption(host, port, username, password, database)
-            )
+            self._connection = SqlBaseConnector(ConnectionOption(host, port, username, password, database))
 
-    def get_model(self) -> TableModel:
+    def get_model(self) -> SqlModel:
         if self._connection is None:
             raise Exception("Database is disconnected")
         if self._model is None:
-            self._model = TableModel(connection=self._connection)
+            self._model = SqlModel(connection=self._connection)
         return self._model
 
 
@@ -44,15 +42,13 @@ class _MongoGetter:
             username = AppConfig.Global.Mongo.USER_NAME
             password = AppConfig.Global.Mongo.PASSWORD
             database = AppConfig.Global.Mongo.DATABASE_NAME
-            self._connection = MongoBaseConnector(
-                ConnectionOption(host, port, username, password, database)
-            )
+            self._connection = MongoBaseConnector(ConnectionOption(host, port, username, password, database))
 
-    def get_model(self):
+    def get_model(self) -> MongoModel:
         if self._connection is None:
             raise Exception("Database is disconnected")
         if self._model is None:
-            self._model = CollectionModel(connection=self._connection)
+            self._model = MongoModel(connection=self._connection)
         return self._model
 
 

@@ -38,26 +38,18 @@ class _CopyLinear(nn.Module):
 
 
 class CopySumm(Seq2SeqSumm):
-    def __init__(
-        self, vocab_size, emb_dim, n_hidden, bidirectional, n_layer, dropout=0.0
-    ):
+    def __init__(self, vocab_size, emb_dim, n_hidden, bidirectional, n_layer, dropout=0.0):
         super().__init__(vocab_size, emb_dim, n_hidden, bidirectional, n_layer, dropout)
         self._copy = _CopyLinear(n_hidden, n_hidden, 2 * emb_dim)
-        self._decoder = CopyLSTMDecoder(
-            self._copy, self._embedding, self._dec_lstm, self._attn_wq, self._projection
-        )
+        self._decoder = CopyLSTMDecoder(self._copy, self._embedding, self._dec_lstm, self._attn_wq, self._projection)
 
     def forward(self, article, art_lens, abstract, extend_art, extend_vsize):
         attention, init_dec_states = self.encode(article, art_lens)
         mask = len_mask(art_lens, attention.device).unsqueeze(-2)
-        logit = self._decoder(
-            (attention, mask, extend_art, extend_vsize), init_dec_states, abstract
-        )
+        logit = self._decoder((attention, mask, extend_art, extend_vsize), init_dec_states, abstract)
         return logit
 
-    def batch_decode(
-        self, article, art_lens, extend_art, extend_vsize, go, eos, unk, max_len
-    ):
+    def batch_decode(self, article, art_lens, extend_art, extend_vsize, go, eos, unk, max_len):
         """greedy decode support batching"""
         batch_size = len(art_lens)
         vsize = self._embedding.num_embeddings
@@ -113,10 +105,7 @@ class CopySumm(Seq2SeqSumm):
         all_attention = (attention, mask, extend_art, extend_vsize)
         attention = all_attention
         (h, c), prev = init_dec_states
-        all_beams = [
-            bs.init_beam(go, (h[:, i, :], c[:, i, :], prev[i]))
-            for i in range(batch_size)
-        ]
+        all_beams = [bs.init_beam(go, (h[:, i, :], c[:, i, :], prev[i])) for i in range(batch_size)]
         finished_beams = [[] for _ in range(batch_size)]
         outputs = [None for _ in range(batch_size)]
         for t in range(max_len):
@@ -136,9 +125,7 @@ class CopySumm(Seq2SeqSumm):
             )
             token.masked_fill_(token >= vsize, unk)
 
-            topk, lp, states, attn_score = self._decoder.topk_step(
-                token, states, attention, beam_size
-            )
+            topk, lp, states, attn_score = self._decoder.topk_step(token, states, attention, beam_size)
             batch_i = 0
             for i, (beam, finished) in enumerate(zip(all_beams, finished_beams)):
                 if not beam:
@@ -209,9 +196,7 @@ class CopyLSTMDecoder(AttentionalLSTMDecoder):
         copy_prob = torch.sigmoid(self._copy(context, states[0][-1], lstm_in))
         # add the copy prob to existing vocab distribution
         lp = torch.log(
-            ((-copy_prob + 1) * gen_prob).scatter_add(
-                dim=1, index=extend_src.expand_as(score), src=score * copy_prob
-            )
+            ((-copy_prob + 1) * gen_prob).scatter_add(dim=1, index=extend_src.expand_as(score), src=score * copy_prob)
             + 1e-8
         )  # numerical stability for log
         return lp, (states, dec_out), score
@@ -240,21 +225,13 @@ class CopyLSTMDecoder(AttentionalLSTMDecoder):
         dec_out = self._projection(torch.cat([lstm_out, context], dim=-1))
 
         # copy mechanism is not beamable
-        gen_prob = self._compute_gen_prob(
-            dec_out.contiguous().view(batch * beam, -1), extend_vsize
-        )
-        copy_prob = (
-            torch.sigmoid(self._copy(context, lstm_out, lstm_in_beamable))
-            .contiguous()
-            .view(-1, 1)
-        )
+        gen_prob = self._compute_gen_prob(dec_out.contiguous().view(batch * beam, -1), extend_vsize)
+        copy_prob = torch.sigmoid(self._copy(context, lstm_out, lstm_in_beamable)).contiguous().view(-1, 1)
         lp = (
             torch.log(
                 ((-copy_prob + 1) * gen_prob).scatter_add(
                     dim=1,
-                    index=extend_src.expand_as(score)
-                    .contiguous()
-                    .view(beam * batch, -1),
+                    index=extend_src.expand_as(score).contiguous().view(beam * batch, -1),
                     source=score.contiguous().view(beam * batch, -1) * copy_prob,
                 )
                 + 1e-8

@@ -8,9 +8,7 @@ def run_contract():
     # get provider
     web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
 
-    contract = web3.eth.contract(
-        abi=simple_interface["abi"], bytecode=simple_interface["bytecode"]
-    )
+    contract = web3.eth.contract(abi=simple_interface["abi"], bytecode=simple_interface["bytecode"])
 
     tx_hash = contract.constructor().buildTransaction(
         {

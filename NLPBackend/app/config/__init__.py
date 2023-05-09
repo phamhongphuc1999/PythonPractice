@@ -18,9 +18,7 @@ def setup_cors(app):
 
 
 def setup_logging(log_file, log_console):
-    log_formatter = logging.Formatter(
-        fmt="%(asctime)s %(levelname)s-%(message)s", datefmt="%Y-%m-%d %H:%M:%S"
-    )
+    log_formatter = logging.Formatter(fmt="%(asctime)s %(levelname)s-%(message)s", datefmt="%Y-%m-%d %H:%M:%S")
     root_logger = logging.getLogger()
 
     if log_file:

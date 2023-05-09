@@ -12,9 +12,7 @@ async def login_app(request: Request):
     try:
         require_params(request, ["name"])
         production_name = request.args.get("name")
-        user_data = ModelGetter.SQL.get_model().production.get_production(
-            production_name
-        )
+        user_data = ModelGetter.SQL.get_model().production.get_production(production_name)
         return ok_json({"data": user_data})
     except Exception as error:
         return bad_request_json(str(error))

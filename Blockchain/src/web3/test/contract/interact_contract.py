@@ -31,9 +31,7 @@ def send_event(simple_contract):
 
 def run_interact_contract():
     simple_interface = ContractConfig.SIMPLE_CONTRACT
-    simple_contract = web3.eth.contract(
-        address=contract_address, abi=simple_interface["abi"]
-    )
+    simple_contract = web3.eth.contract(address=contract_address, abi=simple_interface["abi"])
     set_data(simple_contract, 100)
 
     # get data from smart contract
@@ -43,9 +41,7 @@ def run_interact_contract():
     print(result)
 
     # listen event
-    increase_event = simple_contract.events.Increase.createFilter(
-        fromBlock=0, toBlock="latest"
-    )
+    increase_event = simple_contract.events.Increase.createFilter(fromBlock=0, toBlock="latest")
     print("event", increase_event)
     increase_event = increase_event.get_all_entries()
     for event in increase_event:

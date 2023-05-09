@@ -32,9 +32,7 @@ async def get_data(request: Request):
         bep20_contract = Bep20Contract(token_address, _web3)
         _decimal = bep20_contract.decimals()
         _name = bep20_contract.name()
-        return ok_json(
-            {"data": {"decimal": _decimal, "name": _name}, "network": _network}
-        )
+        return ok_json({"data": {"decimal": _decimal, "name": _name}, "network": _network})
     except Exception as error:
         return bad_request_json(str(error))
 
@@ -55,8 +53,6 @@ async def get_balance(request: Request):
         bep20_contract = Bep20Contract(token_address, _web3)
         account_balance = bep20_contract.balance_of(account_address)
         _decimal = bep20_contract.decimals()
-        return ok_json(
-            {"balance": account_balance / (10**_decimal), "network": _network}
-        )
+        return ok_json({"balance": account_balance / (10**_decimal), "network": _network})
     except Exception as error:
         return bad_request_json(str(error))

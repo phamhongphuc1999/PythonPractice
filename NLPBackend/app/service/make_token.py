@@ -29,9 +29,7 @@ def tokenize_stories(story: str):
     stories = os.listdir("story")
     with open("mapping.txt", "w") as f:
         for s in stories:
-            f.write(
-                "{} \t {}\n".format(os.path.join("story", s), os.path.join("story1", s))
-            )
+            f.write("{} \t {}\n".format(os.path.join("story", s), os.path.join("story1", s)))
     command = [
         "java",
         "edu.stanford.nlp.process.PTBTokenizer",

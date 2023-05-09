@@ -6,9 +6,7 @@ from app.database.base_connector import (
 
 
 class SqlBaseModel:
-    def __init__(
-        self, connection: SqlBaseConnector = None, option: ConnectionOption = None
-    ):
+    def __init__(self, connection: SqlBaseConnector = None, option: ConnectionOption = None):
         if connection:
             self.connection = connection
         elif option:
@@ -18,9 +16,7 @@ class SqlBaseModel:
 
 
 class MongoBaseModel:
-    def __init__(
-        self, connection: MongoBaseConnector = None, option: ConnectionOption = None
-    ):
+    def __init__(self, connection: MongoBaseConnector = None, option: ConnectionOption = None):
         if connection:
             self.connection = connection
         elif option:

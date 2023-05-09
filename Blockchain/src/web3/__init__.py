@@ -1,13 +1,7 @@
 repay_event_sign = self.web3.keccak(text="Repay(address,address,address,uint256)").hex()
-withdraw_event_sign = self.web3.keccak(
-    text="Withdraw(address,address,address,uint256)"
-).hex()
-deposit_event_sign = self.web3.keccak(
-    text="Deposit(address,address,address,uint256,uint16)"
-).hex()
-borrow_event_sign = self.web3.keccak(
-    text="Borrow(address,address,address,uint256,uint256,uint16)"
-).hex()
+withdraw_event_sign = self.web3.keccak(text="Withdraw(address,address,address,uint256)").hex()
+deposit_event_sign = self.web3.keccak(text="Deposit(address,address,address,uint256,uint16)").hex()
+borrow_event_sign = self.web3.keccak(text="Borrow(address,address,address,uint256,uint256,uint16)").hex()
 
 print(repay_event_sign)
 print(withdraw_event_sign)
@@ -16,9 +10,7 @@ print(borrow_event_sign)
 
 while True:
     try:
-        abc = self.web3.eth.filter(
-            {"fromBlock": 11627375, "toBlock": 11637375, "address": pool_address}
-        )
+        abc = self.web3.eth.filter({"fromBlock": 11627375, "toBlock": 11637375, "address": pool_address})
         event_logs = self.web3.eth.getFilterLogs(abc.filter_id)
         print(event_logs)
 

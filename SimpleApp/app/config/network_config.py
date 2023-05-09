@@ -22,9 +22,7 @@ class FtmMainnetConfig:
 
 class BscTestnetConfig:
     class Provider:
-        PROVIDER1 = create_http_provider(
-            "https://data-seed-prebsc-1-s3.binance.org:8545/"
-        )
+        PROVIDER1 = create_http_provider("https://data-seed-prebsc-1-s3.binance.org:8545/")
 
 
 class NetworkConfig:

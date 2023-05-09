@@ -6,8 +6,9 @@
 
 ---
 
-- [Quickstart](#quickstart)
-- [Reference](#reference)
+1. [Quickstart](#quickstart)
+2. [Database testing](#database_testing)
+3. [Reference](#reference)
 
 ---
 
@@ -63,7 +64,7 @@ You can run the project on your local environment with these steps:
 
 ---
 
-### Database testing
+### Database testing <a name="database_testing"></a>
 
 - How to execute database docker container
 
@@ -87,6 +88,31 @@ You can run the project on your local environment with these steps:
 
 ---
 
+### Pre commit <a name="pre_commit"></a>
+
+My project use [pre-commit](https://pre-commit.com/#intro) to check code before pushing to git. You can find all setup and command line in [here](https://pre-commit.com/#intro). In this article, i simply introduce some useful command line
+
+- Install pre-commit to git hook
+
+```commandline
+pre-commit install
+```
+
+- Run pre-commit manually
+
+```commandline
+pre-commit run --all-files
+```
+
+- Learn command line rule
+
+```commandline
+pre-commit --help
+```
+
+---
+
 ### Reference <a name="reference"></a>
 
-- [https://core.telegram.org/bots/api#available-methods](https://core.telegram.org/bots/api#available-methods)
+- https://core.telegram.org/bots/api#available-methods
+- https://pre-commit.com/#intro

@@ -34,7 +34,9 @@ class ColoredFormatter(logging.Formatter):
 
 # Custom logger class with multiple destinations
 class ColoredLogger(logging.Logger):
-    FORMAT = f"{bold}[%(asctime)s]{reset} %(levelname)s: {bold}%(message)s{reset} {fgCyan}(%(filename)s:%(lineno)d){reset}"
+    FORMAT = (
+        f"{bold}[%(asctime)s]{reset} %(levelname)s: {bold}%(message)s{reset} {fgCyan}(%(filename)s:%(lineno)d){reset}"
+    )
 
     def __init__(self, name):
         logging.Logger.__init__(self, name, logging.DEBUG)

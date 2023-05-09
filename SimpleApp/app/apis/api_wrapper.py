@@ -28,9 +28,7 @@ def _check_jwt_token(request: Request):
     if not jwt_token:
         return False
     try:
-        _user_data = jwt.decode(
-            jwt_token, AppConfig.Global.Auth.SECRET_KEY, algorithms=["HS256"]
-        )
+        _user_data = jwt.decode(jwt_token, AppConfig.Global.Auth.SECRET_KEY, algorithms=["HS256"])
         return _user_data
     except jwt.exceptions.InvalidTokenError:
         return False

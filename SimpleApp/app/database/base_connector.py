@@ -10,13 +10,20 @@ from app.services.logger_service import app_logger
 
 class ConnectionOption:
     def __init__(
-        self, host: str, port: str, username: str, password: str, database: str
+        self,
+        host: str = None,
+        port: str = None,
+        username: str = None,
+        password: str = None,
+        database: str = None,
+        connection_string: str = None,
     ):
         self.host = host
         self.port = port
         self.username = username
         self.password = password
         self.database = database
+        self.connection_string = connection_string
 
 
 class BaseConnector:
@@ -31,18 +38,22 @@ class MongoBaseConnector(BaseConnector):
 
     def _connect(self):
         try:
-            host = self.option.host
-            port = self.option.port
-            username = self.option.username
-            password = self.option.password
-            database = self.option.database
-            self._connection = MongoClient(
-                host=host, port=port, username=username, password=password
-            )
-            if self._connection.server_info():
-                app_logger.info(f"Connected to database: {host}:{port}")
+            if self.option.connection_string:
+                self._connection = MongoClient(self.option.connection_string)
+                if self._connection.server_info():
+                    app_logger.info(f"Connected to database with special connection string")
+                else:
+                    raise Exception("Connection to mongodb fail")
             else:
-                raise Exception("Connection to mongodb fail")
+                host = self.option.host
+                port = self.option.port
+                username = self.option.username
+                password = self.option.password
+                self._connection = MongoClient(host=host, port=port, username=username, password=password)
+                if self._connection.server_info():
+                    app_logger.info(f"Connected to database: {host}:{port}")
+                else:
+                    raise Exception("Connection to mongodb fail")
         except Exception as err:
             raise err
 

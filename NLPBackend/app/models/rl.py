@@ -45,12 +45,8 @@ class PtrExtractorRL(nn.Module):
             h, c = self._lstm_cell(lstm_in, lstm_states)
             query = h[:, -1, :]
             for _ in range(self._n_hop):
-                query = PtrExtractorRL.attention(
-                    hop_feat, query, self._hop_v, self._hop_wq
-                )
-            score = PtrExtractorRL.attention_score(
-                attn_feat, query, self._attn_v, self._attn_wq
-            )
+                query = PtrExtractorRL.attention(hop_feat, query, self._hop_v, self._hop_wq)
+            score = PtrExtractorRL.attention_score(attn_feat, query, self._attn_v, self._attn_wq)
             if self.training:
                 prob = F.softmax(score, dim=-1)
                 out = torch.distributions.Categorical(prob)
@@ -73,9 +69,7 @@ class PtrExtractorRL(nn.Module):
     @staticmethod
     def attention(attention, query, v, w):
         """attention context vector"""
-        score = F.softmax(
-            PtrExtractorRL.attention_score(attention, query, v, w), dim=-1
-        )
+        score = F.softmax(PtrExtractorRL.attention_score(attention, query, v, w), dim=-1)
         output = torch.mm(score, attention)
         return output
 
@@ -107,12 +101,8 @@ class PtrExtractorRLStop(PtrExtractorRL):
             h, c = self._lstm_cell(lstm_in, lstm_states)
             query = h[:, -1, :]
             for _ in range(self._n_hop):
-                query = PtrExtractorRL.attention(
-                    hop_feat, query, self._hop_v, self._hop_wq
-                )
-            score = PtrExtractorRL.attention_score(
-                attn_feat, query, self._attn_v, self._attn_wq
-            )
+                query = PtrExtractorRL.attention(hop_feat, query, self._hop_v, self._hop_wq)
+            score = PtrExtractorRL.attention_score(attn_feat, query, self._attn_v, self._attn_wq)
             for o in outputs:
                 score[0, o.item()] = -1e18
             if self.training:
@@ -170,12 +160,8 @@ class PtrScorer(nn.Module):
             h, c = self._lstm_cell(lstm_in, lstm_states)
             query = h[:, -1, :]
             for _ in range(self._n_hop):
-                query = PtrScorer.attention(
-                    hop_feat, hop_feat, query, self._hop_v, self._hop_wq
-                )
-            output = PtrScorer.attention(
-                attn_mem, attn_feat, query, self._attn_v, self._attn_wq
-            )
+                query = PtrScorer.attention(hop_feat, hop_feat, query, self._hop_v, self._hop_wq)
+            output = PtrScorer.attention(attn_mem, attn_feat, query, self._attn_v, self._attn_wq)
             score = self._score_linear(output)
             scores.append(score)
             lstm_in = output

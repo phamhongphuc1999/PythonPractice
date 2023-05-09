@@ -10,9 +10,5 @@ class Config:
 
 
 class ContractConfig:
-    SIMPLE_CONTRACT = json.loads(
-        open(f"{basedir}/contract/abi/simple-contract.json").read()
-    )
-    SUB_CURRENCY_CONTRACT = json.loads(
-        open(f"{basedir}/contract/abi/sub_currency.json").read()
-    )
+    SIMPLE_CONTRACT = json.loads(open(f"{basedir}/contract/abi/simple-contract.json").read())
+    SUB_CURRENCY_CONTRACT = json.loads(open(f"{basedir}/contract/abi/sub_currency.json").read())

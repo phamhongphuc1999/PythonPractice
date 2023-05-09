@@ -18,20 +18,14 @@ class ConvSentEncoder(nn.Module):
     def __init__(self, vocab_size, emb_dim, n_hidden, dropout):
         super().__init__()
         self._embedding = nn.Embedding(vocab_size, emb_dim, padding_idx=0)
-        self._convs = nn.ModuleList(
-            [nn.Conv1d(emb_dim, n_hidden, i) for i in range(3, 6)]
-        )
+        self._convs = nn.ModuleList([nn.Conv1d(emb_dim, n_hidden, i) for i in range(3, 6)])
         self._dropout = dropout
         self._grad_handle = None
 
     def forward(self, input_):
         emb_input = self._embedding(input_)
-        conv_in = F.dropout(
-            emb_input.transpose(1, 2), self._dropout, training=self.training
-        )
-        output = torch.cat(
-            [F.relu(conv(conv_in)).max(dim=2)[0] for conv in self._convs], dim=1
-        )
+        conv_in = F.dropout(emb_input.transpose(1, 2), self._dropout, training=self.training)
+        output = torch.cat([F.relu(conv(conv_in)).max(dim=2)[0] for conv in self._convs], dim=1)
         return output
 
     def set_embedding(self, embedding):
@@ -43,17 +37,11 @@ class ConvSentEncoder(nn.Module):
 class LSTMEncoder(nn.Module):
     def __init__(self, input_dim, n_hidden, n_layer, dropout, bidirectional):
         super().__init__()
-        self._init_h = nn.Parameter(
-            torch.Tensor(n_layer * (2 if bidirectional else 1), n_hidden)
-        )
-        self._init_c = nn.Parameter(
-            torch.Tensor(n_layer * (2 if bidirectional else 1), n_hidden)
-        )
+        self._init_h = nn.Parameter(torch.Tensor(n_layer * (2 if bidirectional else 1), n_hidden))
+        self._init_c = nn.Parameter(torch.Tensor(n_layer * (2 if bidirectional else 1), n_hidden))
         init.uniform_(self._init_h, -INI, INI)
         init.uniform_(self._init_c, -INI, INI)
-        self._lstm = nn.LSTM(
-            input_dim, n_hidden, n_layer, dropout=dropout, bidirectional=bidirectional
-        )
+        self._lstm = nn.LSTM(input_dim, n_hidden, n_layer, dropout=dropout, bidirectional=bidirectional)
 
     def forward(self, input_, in_lens=None):
         """[batch_size, max_num_sent, input_dim] Tensor"""
@@ -113,9 +101,7 @@ class ExtractSumm(nn.Module):
         enc_sent, enc_art = self._encode(article_sents, sent_nums)
         saliency = torch.matmul(enc_sent, enc_art.unsqueeze(2))
         saliency = torch.cat([s[:n] for s, n in zip(saliency, sent_nums)], dim=0)
-        content = self._sent_linear(
-            torch.cat([s[:n] for s, n in zip(enc_sent, sent_nums)], dim=0)
-        )
+        content = self._sent_linear(torch.cat([s[:n] for s, n in zip(enc_sent, sent_nums)], dim=0))
         logit = (content + saliency).squeeze(1)
         return logit
 
@@ -128,14 +114,9 @@ class ExtractSumm(nn.Module):
         if sent_nums is None:  # test-time extract only
             assert len(article_sents) == 1
             n_sent = logit.size(1)
-            extracted = (
-                logit[0].topk(k if k < n_sent else n_sent, sorted=False)[1].tolist()
-            )
+            extracted = logit[0].topk(k if k < n_sent else n_sent, sorted=False)[1].tolist()
         else:
-            extracted = [
-                l[:n].topk(k if k < n else n)[1].tolist()
-                for n, l in zip(sent_nums, logit)
-            ]
+            extracted = [l[:n].topk(k if k < n else n)[1].tolist() for n, l in zip(sent_nums, logit)]
         return extracted
 
     def _encode(self, article_sents, sent_nums):
@@ -151,9 +132,7 @@ class ExtractSumm(nn.Module):
 
             enc_sent = torch.stack(
                 [
-                    torch.cat([s, zero(max_n - n, s.device)], dim=0)
-                    if n != max_n
-                    else s
+                    torch.cat([s, zero(max_n - n, s.device)], dim=0) if n != max_n else s
                     for s, n in zip(enc_sents, sent_nums)
                 ],
                 dim=0,
@@ -177,9 +156,7 @@ class LSTMPointerNet(nn.Module):
         init.uniform_(self._init_h, -INI, INI)
         init.uniform_(self._init_c, -INI, INI)
         init.uniform_(self._init_i, -0.1, 0.1)
-        self._lstm = nn.LSTM(
-            input_dim, n_hidden, n_layer, bidirectional=False, dropout=dropout
-        )
+        self._lstm = nn.LSTM(input_dim, n_hidden, n_layer, bidirectional=False, dropout=dropout)
         self._lstm_cell = None
 
         # attention parameters
@@ -206,12 +183,8 @@ class LSTMPointerNet(nn.Module):
         query, final_states = self._lstm(lstm_in, lstm_states)
         query = query.transpose(0, 1)
         for _ in range(self._n_hop):
-            query = LSTMPointerNet.attention(
-                hop_feat, query, self._hop_v, self._hop_wq, mem_sizes
-            )
-        output = LSTMPointerNet.attention_score(
-            attn_feat, query, self._attn_v, self._attn_wq
-        )
+            query = LSTMPointerNet.attention(hop_feat, query, self._hop_v, self._hop_wq, mem_sizes)
+        output = LSTMPointerNet.attention_score(attn_feat, query, self._attn_v, self._attn_wq)
         return output  # unormalized extraction logit
 
     def extract(self, attn_mem, mem_sizes, k):
@@ -219,20 +192,14 @@ class LSTMPointerNet(nn.Module):
         attn_feat, hop_feat, lstm_states, lstm_in = self._prepare(attn_mem)
         lstm_in = lstm_in.squeeze(1)
         if self._lstm_cell is None:
-            self._lstm_cell = MultiLayerLSTMCells.convert(self._lstm).to(
-                attn_mem.device
-            )
+            self._lstm_cell = MultiLayerLSTMCells.convert(self._lstm).to(attn_mem.device)
         extracts = []
         for _ in range(k):
             h, c = self._lstm_cell(lstm_in, lstm_states)
             query = h[-1]
             for _ in range(self._n_hop):
-                query = LSTMPointerNet.attention(
-                    hop_feat, query, self._hop_v, self._hop_wq, mem_sizes
-                )
-            score = LSTMPointerNet.attention_score(
-                attn_feat, query, self._attn_v, self._attn_wq
-            )
+                query = LSTMPointerNet.attention(hop_feat, query, self._hop_v, self._hop_wq, mem_sizes)
+            score = LSTMPointerNet.attention_score(attn_feat, query, self._attn_v, self._attn_wq)
             score = score.squeeze()
             for e in extracts:
                 score[e] = -1e6
@@ -259,14 +226,8 @@ class LSTMPointerNet(nn.Module):
     @staticmethod
     def attention_score(attention, query, v, w):
         """unnormalized attention score"""
-        sum_ = attention.unsqueeze(1) + torch.matmul(query, w.unsqueeze(0)).unsqueeze(
-            2
-        )  # [B, Nq, Ns, D]
-        score = torch.matmul(
-            F.tanh(sum_), v.unsqueeze(0).unsqueeze(1).unsqueeze(3)
-        ).squeeze(
-            3
-        )  # [B, Nq, Ns]
+        sum_ = attention.unsqueeze(1) + torch.matmul(query, w.unsqueeze(0)).unsqueeze(2)  # [B, Nq, Ns, D]
+        score = torch.matmul(F.tanh(sum_), v.unsqueeze(0).unsqueeze(1).unsqueeze(3)).squeeze(3)  # [B, Nq, Ns]
         return score
 
     @staticmethod
@@ -306,17 +267,13 @@ class PtrExtractSumm(nn.Module):
             bidirectional=bidirectional,
         )
         enc_out_dim = lstm_hidden * (2 if bidirectional else 1)
-        self._extractor = LSTMPointerNet(
-            enc_out_dim, lstm_hidden, lstm_layer, dropout, n_hop
-        )
+        self._extractor = LSTMPointerNet(enc_out_dim, lstm_hidden, lstm_layer, dropout, n_hop)
 
     def forward(self, article_sents, sent_nums, target):
         enc_out = self._encode(article_sents, sent_nums)
         bs, nt = target.size()
         d = enc_out.size(2)
-        ptr_in = torch.gather(
-            enc_out, dim=1, index=target.unsqueeze(2).expand(bs, nt, d)
-        )
+        ptr_in = torch.gather(enc_out, dim=1, index=target.unsqueeze(2).expand(bs, nt, d))
         output = self._extractor(enc_out, sent_nums, ptr_in)
         return output
 
@@ -338,9 +295,7 @@ class PtrExtractSumm(nn.Module):
 
             enc_sent = torch.stack(
                 [
-                    torch.cat([s, zero(max_n - n, s.device)], dim=0)
-                    if n != max_n
-                    else s
+                    torch.cat([s, zero(max_n - n, s.device)], dim=0) if n != max_n else s
                     for s, n in zip(enc_sents, sent_nums)
                 ],
                 dim=0,

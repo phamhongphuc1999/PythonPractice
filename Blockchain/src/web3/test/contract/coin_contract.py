@@ -10,9 +10,7 @@ class Coin:
         self.count = 0
         sub_concurrency = ContractConfig.SUB_CURRENCY_CONTRACT
         self.web3 = web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
-        self.contract = web3.eth.contract(
-            abi=sub_concurrency["abi"], bytecode=sub_concurrency["bytecode"]
-        )
+        self.contract = web3.eth.contract(abi=sub_concurrency["abi"], bytecode=sub_concurrency["bytecode"])
 
     def deploy_new_contract(self):
         tx_hash = self.contract.constructor().buildTransaction(
@@ -37,9 +35,7 @@ class Coin:
         build_func = self.contract.functions.send(receiver, amount).buildTransaction(
             {"nonce": self.web3.eth.getTransactionCount(Config.ACCOUNT_ADDRESS)}
         )
-        signed_tx = self.web3.eth.account.signTransaction(
-            build_func, Config.PRIVATE_KEY
-        )
+        signed_tx = self.web3.eth.account.signTransaction(build_func, Config.PRIVATE_KEY)
         event_tx_hash = self.web3.eth.sendRawTransaction(signed_tx.rawTransaction)
         tx_receipt = self.web3.eth.waitForTransactionReceipt(event_tx_hash)
         return tx_receipt
@@ -48,17 +44,13 @@ class Coin:
         build_func = self.contract.functions.mint(receiver, amount).buildTransaction(
             {"nonce": self.web3.eth.getTransactionCount(Config.ACCOUNT_ADDRESS)}
         )
-        signed_tx = self.web3.eth.account.signTransaction(
-            build_func, Config.PRIVATE_KEY
-        )
+        signed_tx = self.web3.eth.account.signTransaction(build_func, Config.PRIVATE_KEY)
         event_tx_hash = self.web3.eth.sendRawTransaction(signed_tx.rawTransaction)
         tx_receipt = self.web3.eth.waitForTransactionReceipt(event_tx_hash)
         return tx_receipt
 
     def _get_event(self):
-        event_filter = self.contract.events.Sent.createFilter(
-            fromBlock=self.count, toBlock="latest"
-        )
+        event_filter = self.contract.events.Sent.createFilter(fromBlock=self.count, toBlock="latest")
         for event in event_filter.get_all_entries():
             self.count = event["blockNumber"]
             print(event)

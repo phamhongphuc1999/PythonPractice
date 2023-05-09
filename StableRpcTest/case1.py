@@ -12,16 +12,10 @@ def _tracking(message: str, app_logger, bot_id, chat_id):
 
 
 def run(_stable_web3, token_address, text: str, app_logger, bot_id, chat_id):
-    app_logger.info(
-        f"{text} Set best web3======================================================="
-    )
+    app_logger.info(f"{text} Set best web3=======================================================")
     result1 = _stable_web3.set_best_web3()
-    bep_contract = _stable_web3.web3().eth.contract(
-        address=token_address, abi=BEP20_ABI
-    )
-    token_balance = bep_contract.functions.balanceOf(
-        "0x871DBcE2b9923A35716e7E83ee402B535298538E"
-    ).call()
+    bep_contract = _stable_web3.web3().eth.contract(address=token_address, abi=BEP20_ABI)
+    token_balance = bep_contract.functions.balanceOf("0x871DBcE2b9923A35716e7E83ee402B535298538E").call()
     _message = f"{text}-balance: {token_balance}, rpc: {result1['rpc'].provider_url}"
     if "currentRpc" in result1:
         _message += f", Current RPC: {result1['currentRpc'].provider_url}"
@@ -43,9 +37,7 @@ if __name__ == "__main__":
         _text = "ETH"
     if _config is not None:
         _app_logger = get_logger(_text, f"{_text.lower()}.log")
-        stable_web3_entity = StableWeb3(
-            web3_list=_config.WEB3_LIST, chain_id=_config.CHAIN_ID
-        )
+        stable_web3_entity = StableWeb3(web3_list=_config.WEB3_LIST, chain_id=_config.CHAIN_ID)
         while True:
             try:
                 run(
