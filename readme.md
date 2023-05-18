@@ -1,11 +1,12 @@
 <h1 align="center">
-  PYTHON PRACTICE
+  Python practice
 </h1>
 
 ---
 
-| Thư mục                     | Ý nghĩa                      |
-|:----------------------------|:-----------------------------|
-| [Simple App](./SimpleApp)   | API đơn giản viết bằng Sanic |
-| [Blockchain](./Blockchain)  | Tương tác với blockchain     |
-| [NLP Backend](./NLPBackend) | Backend của môn NLP          |
+| Folder                      | Description                                |
+| :-------------------------- | :----------------------------------------- |
+| [Simple App](./SimpleApp)   | Simple API written by Sanic                |
+| [Blockchain](./Blockchain)  | Simple package interacting with blockchain |
+| [NLP Backend](./NLPBackend) | NLP backend                                |
+| [tutorial](./tutorial/)     |                                            |
