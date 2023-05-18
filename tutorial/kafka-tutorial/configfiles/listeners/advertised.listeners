@@ -1,2 +1,0 @@
-listeners=INTERNAL://:9092,EXTERNAL://:4000
-advertised.listeners=INTERNAL://leesin:9092,EXTERNAL://10.0.2.15:4000

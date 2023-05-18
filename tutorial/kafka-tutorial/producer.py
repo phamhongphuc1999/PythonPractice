@@ -1,8 +1,31 @@
-from kafka import KafkaProducer
+import time
 import json
+import random
+from datetime import datetime
+from data_generator import generate_message
+from kafka import KafkaProducer
+
+
+# Messages will be serialized as JSON
+def serializer(message):
+    return json.dumps(message).encode("utf-8")
+
+
+# Kafka Producer
+producer = KafkaProducer(bootstrap_servers=["localhost:9092"], value_serializer=serializer)
 
 if __name__ == "__main__":
-    producer = KafkaProducer(bootstrap_servers="10.0.2.15:4000", api_version=(0, 11, 5))
-    print(producer.config)
-    print(producer.bootstrap_connected())
-    producer.send("quickstart-events", b"message one")
+    print(f"config: {producer.config}")
+    print(f"connect: {producer.bootstrap_connected()}")
+    # Infinite loop - runs until you kill the program
+    while True:
+        # Generate a message
+        dummy_message = generate_message()
+
+        # Send it to our 'messages' topic
+        print(f"Producing message @ {datetime.now()} | Message = {str(dummy_message)}")
+        producer.send("messages", dummy_message)
+
+        # Sleep for a random number of seconds
+        time_to_sleep = random.randint(1, 11)
+        time.sleep(time_to_sleep)

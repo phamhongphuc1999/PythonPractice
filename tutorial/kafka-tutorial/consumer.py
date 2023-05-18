@@ -1,10 +1,10 @@
+import json
 from kafka import KafkaConsumer
 
 if __name__ == "__main__":
-    consumer = KafkaConsumer(bootstrap_servers=["localhost:9092"], auto_offset_reset="earliest")
-    print(consumer.config)
-    print(consumer.bootstrap_connected())
-    consumer.subscribe(["quickstart-events"])
-
-    for event in consumer:
-        print(event)
+    # Kafka Consumer
+    consumer = KafkaConsumer("messages", bootstrap_servers="localhost:9092", auto_offset_reset="earliest")
+    for message in consumer:
+        my_bytes_value = message.value
+        my_json = my_bytes_value.decode("utf8").replace("'", '"')
+        print(json.loads(my_json))

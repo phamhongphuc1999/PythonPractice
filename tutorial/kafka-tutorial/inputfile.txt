@@ -1,3 +1,0 @@
-send message one
-send message two
-send message three
