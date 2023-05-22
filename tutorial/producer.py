@@ -1,31 +1,31 @@
-import time
 import json
 import random
-from datetime import datetime
-from data_generator import generate_message
+import sys
+import time
+
 from kafka import KafkaProducer
 
 
-# Messages will be serialized as JSON
 def serializer(message):
     return json.dumps(message).encode("utf-8")
 
 
-# Kafka Producer
-producer = KafkaProducer(bootstrap_servers=["localhost:9092"], value_serializer=serializer)
-
 if __name__ == "__main__":
-    print(f"config: {producer.config}")
-    print(f"connect: {producer.bootstrap_connected()}")
-    # Infinite loop - runs until you kill the program
-    while True:
-        # Generate a message
-        dummy_message = generate_message()
-
-        # Send it to our 'messages' topic
-        print(f"Producing message @ {datetime.now()} | Message = {str(dummy_message)}")
-        producer.send("messages", dummy_message)
-
-        # Sleep for a random number of seconds
-        time_to_sleep = random.randint(1, 11)
+    args = sys.argv
+    file_path = "../data/NASA_access_log_Aug95"
+    if len(args) >= 2:
+        file_path = args[1]
+    log_list = open(file_path, "r")
+    log_data = log_list.readline()
+    producer = KafkaProducer(bootstrap_servers=["localhost:29092"], value_serializer=serializer)
+    print(f"Config: {producer.config}")
+    print(f"Connected: {producer.bootstrap_connected()}")
+    while log_data:
+        _len = len(log_data)
+        if log_data[_len - 1] == "\n":
+            log_data = log_data[0 : _len - 1]
+        print(log_data)
+        producer.send("messages", log_data)
+        time_to_sleep = random.randint(1, 5)
         time.sleep(time_to_sleep)
+        log_data = log_list.readline()
