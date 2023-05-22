@@ -20,45 +20,47 @@ You can run the project on your local environment with these steps:
 
 1. **Setup python virtual environment and install libraries**
 
-- *To create virtual environment, run command:*
+- _To create virtual environment, run command:_
 
-    ```shell
-    python3 -m venv venv
-    ```
+  ```shell
+  python3 -m venv venv
+  ```
+
   Or you can use Add Interpreter in PyCharm
 
-- *Activity virtual environment in ubuntu:*
-    ```shell
-    source venv/bin/activate
-    ```
-- *Install libraries*
-    ```shell
-    pip3 install -r requirements.txt
-    ```
+- _Activity virtual environment in ubuntu:_
+  ```shell
+  source venv/bin/activate
+  ```
+- _Install libraries_
+  ```shell
+  pip3 install -r requirements.txt
+  ```
 
 2. **Start Trava API in `development` mode** <br />
    To start API with development environment, simply you run
 
-    ```shell
-    make rundev
-    ```
+   ```shell
+   make rundev
+   ```
 
    If you want to run project with custom environment, you run following:
 
-    ```shell
-    make rundocker
-    ```
+   ```shell
+   make rundocker
+   ```
 
    You want to run project directly without docker, run following:
 
-    ```shell
-    make run
-    ```
+   ```shell
+   make run
+   ```
 
 - to get more information, you can run:
-    ```shell
-    make help
-    ```
+
+  ```shell
+  make help
+  ```
 
 - After your app ran, you can follow [here](http://0.0.0.0:8000/swagger/) to test api
 
@@ -68,21 +70,21 @@ You can run the project on your local environment with these steps:
 
 - How to execute database docker container
 
-    ```shell
-    docker exec -it dev_sanic_sql_container bash
-    ```
+  ```shell
+  docker exec -it dev_sanic_sql_container bash
+  ```
 
 - Login default user with password is sanic
 
-    ```shell
-    mysql -u root -p
-    ```
+  ```shell
+  mysql -u root -p
+  ```
 
 - Switching to sanic_app database
 
-    ```shell
-    use sanic_app;
-    ```
+  ```shell
+  use sanic_app;
+  ```
 
 - End then you can enter your query command in console line.
 

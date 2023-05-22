@@ -1,12 +1,18 @@
-### NLP Backend
+<div align="center">
+
+NLP Backend
+
+</div>
 
 ### Thiết lập môi trường
 
 ##### Cài môi trường java để chạy lệnh tách từ
+
 - Có thể đọc hường dẫn chi tiết tại [đây](https://github.com/ChenRocks/cnn-dailymail)
 
 1. Nếu chưa cài môi trường java thì cài, kiểm tra bằng lệnh
-    ```shell
+
+   ```shell
    java --version
    ```
 
@@ -18,11 +24,13 @@
    ```
 
 ###### Cài đặt thư viện
+
 - Chương trình sử dụng [anaconda](https://www.anaconda.com/) để cài thư viện
 
 ###### Điều chỉnh các config
 
 1. Điều chỉnh lại đường dẫn đến các thư mục liên quan
+
 - Điều chỉnh tại [đây](app/config/constants.py)
 
 ### Chạy chương trình
