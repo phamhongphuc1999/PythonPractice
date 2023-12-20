@@ -53,7 +53,6 @@ if __name__ == "__main__":
         functions.regexp_extract("value", re_status, 1).alias("status"),
         functions.regexp_extract("value", re_content_size, 1).alias("content_size"),
     )
-    parsed_logs_df.printSchema()
 
     final_data = (
         parsed_logs_df.writeStream.option("checkpointLocation", "checkpoints")

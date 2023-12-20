@@ -21,6 +21,12 @@ source ./venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
+#### Create .env file with same .env.sample format. You can copy .env.sample by following command
+
+```shell
+cp .env.sample .env
+```
+
 #### Except all sh file
 
 ```shell

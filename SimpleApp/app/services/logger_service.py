@@ -27,4 +27,4 @@ def get_logger(logger_name):
     return logger
 
 
-app_logger = get_logger("bridge_logger")
+app_logger = get_logger("app_logger")

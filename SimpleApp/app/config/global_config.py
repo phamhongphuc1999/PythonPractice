@@ -46,6 +46,9 @@ class GlobalConfig:
             self.DATABASE_NAME = "sanic_app"
             self.HOST = "127.0.0.1"
 
+            self.EMPLOYEE_COLLECTION = "employee"
+            self.PRODUCTION_COLLECTION = "production"
+
         def init_env(self, _env: EnvironmentType):
             if _env == EnvironmentType.DEVELOPMENT:
                 self.HOST = "127.0.0.1"

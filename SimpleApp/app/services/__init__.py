@@ -15,3 +15,13 @@ def get_env():
         return EnvironmentType.BASIC
     else:
         raise Exception(f"Not found {_args[1]}")
+
+
+def convert_mongo_id(mongo_doc):
+    """
+    Convert ObjectId to string, change key '_id' to 'id'
+    """
+    if mongo_doc is not None:
+        if "_id" in mongo_doc:
+            mongo_doc.update({"id": str(mongo_doc.pop("_id"))})
+    return mongo_doc

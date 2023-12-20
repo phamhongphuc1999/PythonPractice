@@ -15,7 +15,7 @@ class Bep20Contract(BaseContract):
         return self.contract.functions.name().call()
 
     def balance_of(self, account_address: str, block_identifier=None):
-        checksum_account_address = Web3.toChecksumAddress(account_address)
+        checksum_account_address = Web3.to_checksum_address(account_address)
         if block_identifier is not None:
             return self.contract.functions.balanceOf(checksum_account_address).call(block_identifier=block_identifier)
         return self.contract.functions.balanceOf(checksum_account_address).call()
