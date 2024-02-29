@@ -66,7 +66,11 @@ class EventLogTest:
             to_block = _data["to"]
             _filter_log_list = self._get_event_log(from_block, to_block)
             if len(_filter_log_list) > 0:
-                send_telegram_message(f"{self.id} event: {len(_filter_log_list)}", self.bot_id, self.chat_id)
+                send_telegram_message(
+                    f"{self.id} event: {len(_filter_log_list)}",
+                    self.bot_id,
+                    self.chat_id,
+                )
 
     def run_task(self):
         while True:
