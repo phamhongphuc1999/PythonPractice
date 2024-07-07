@@ -1,3 +1,0 @@
-stable-ethereum-rpc==0.0.5
-requests==2.28.2
-pre-commit==3.0.2
