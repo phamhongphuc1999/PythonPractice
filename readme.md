@@ -1,12 +1,10 @@
-<h1 align="center">
-  Python practice
-</h1>
+### Python practice
 
----
+### PRojects
 
-| Folder                      | Description                                |
-| :-------------------------- | :----------------------------------------- |
-| [Simple App](./SimpleApp)   | Simple API written by Sanic                |
-| [Blockchain](./Blockchain)  | Simple package interacting with blockchain |
-| [NLP Backend](./NLPBackend) | NLP backend                                |
-| [tutorial](./tutorial/)     |                                            |
+| Project                    | Description                 |
+| :------------------------- | :-------------------------- |
+| [Simple App](./SimpleApp)  | Simple API written by Sanic |
+| [Blockchain](./Blockchain) | Blockchain practice         |
+| [tutorial](./tutorial/)    |                             |
+| [mcts](./mcts/)            | Learn MCTS                  |
