@@ -2,4 +2,4 @@
 
 ### Reference
 
--   https://ai-boson.github.io/mcts/
+-   https://www.geeksforgeeks.org/machine-learning/ml-monte-carlo-tree-search-mcts/

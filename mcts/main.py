@@ -32,7 +32,7 @@ def main():
     print("MCTS Tic-Tac-Toe Demo")
     print("0 = empty, 1 = X, 2 = O\n")
 
-    for turn in range(9):
+    for _ in range(9):
         for row in board: print(row)
         print()
 
@@ -56,5 +56,4 @@ def main():
     print("Draw!")
 
 if __name__ == "__main__":
-    # print('123')
     main()
