@@ -26,6 +26,11 @@ class GameBoard:
 
   def check_move(self, location: int) -> bool:
     return location not in self.steps and 0 <= location < self.number_of_rows * self.number_of_columns and self.status == 'playing'
+  
+  def get_legal_moves(self):
+    """Return list of valid positions that can still be played"""
+    return [i for i in range(self.number_of_rows * self.number_of_columns)
+            if self.check_move(i)]
 
   def move(self, location: int) -> bool:
     if not self.check_move(location):
@@ -46,7 +51,7 @@ class GameBoard:
       return False
     
   def is_terminal(self) -> bool:
-    if len(self.winMode['winNode']) > 0:
+    if len(self.winMode['winMode']) > 0:
       return True
     if len(self.steps) == self.number_of_rows * self.number_of_columns:
       return True
@@ -58,12 +63,10 @@ class GameBoard:
       for col in range(self.number_of_columns):
         index = row * self.number_of_columns + col
         if index in self.steps:
-          if self.steps[index] == 1:
-            _str += f"\033[31m{self.steps[index]}\033[0m "
-          else:
-            _str += f"\033[32m{self.steps[index]}\033[0m "
+          color = "\033[31m" if self.steps[index] == 1 else "\033[32m"
+          _str += f"{color}{self.steps[index]}\033[0m "
         else:
-          _str += " 0 "
+          _str += " . "
       _str += '\n'
     _str += '--------------------------\n'
     return _str
