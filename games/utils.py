@@ -150,23 +150,23 @@ config: Dict[CaroWinType, Dict[str, Callable[[ParamsType], SideReturnType]]] = {
     },
 }
 
-def _analytic_step(type_: CaroWinType, params: ParamsType):
+def _analytic_step(type_: CaroWinType, params: ParamsType, number_to_win: int):
     side1 = config[type_]["side1Func"](params)
     side2 = config[type_]["side2Func"](params)
 
     total_len = len(side1["cells"]) + len(side2["cells"])
-    is_win = total_len >= 4 and (
+    is_win = total_len >= number_to_win - 1 and (
         side1["blockMode"] != "opposite" or side2["blockMode"] != "opposite"
     )
 
     return {"isWin": is_win, "arr": side1["cells"] + side2["cells"]}
 
 
-def check_win(params: ParamsType) -> WinStateType:
-    left_diagonal = _analytic_step(CaroWinType.LEFT_DIAGONAL, params)
-    right_diagonal = _analytic_step(CaroWinType.RIGHT_DIAGONAL, params)
-    vertical = _analytic_step(CaroWinType.VERTICAL, params)
-    horizontal = _analytic_step(CaroWinType.HORIZONTAL, params)
+def check_win(params: ParamsType, number_to_win: int) -> WinStateType:
+    left_diagonal = _analytic_step(CaroWinType.LEFT_DIAGONAL, params, number_to_win)
+    right_diagonal = _analytic_step(CaroWinType.RIGHT_DIAGONAL, params, number_to_win)
+    vertical = _analytic_step(CaroWinType.VERTICAL, params, number_to_win)
+    horizontal = _analytic_step(CaroWinType.HORIZONTAL, params, number_to_win)
     current_step = params["currentStep"]
 
     locations: Dict[int, Dict[str, bool]] = {}
