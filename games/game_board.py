@@ -1,5 +1,5 @@
 from typing import Dict, Literal
-from utils import GameStatusMode, WinStateType, check_win
+from utils.caro_board_utils import GameStatusMode, WinStateType, check_win
 
 class GameBoard:
   number_of_columns: int

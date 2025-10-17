@@ -4,11 +4,13 @@ from typing import Optional
 from mcts_node import MCTSNode
 from game_board import GameBoard
 from typing import Literal
+import numpy as np
 
 class MCTSPlayer:
   def __init__(self, num_simulations: int = 1000, c_param: float = 1.4) -> None:
     self.num_simulations = num_simulations
     self.c_param = c_param
+    self.memory = []
 
   def run(self, root_state: GameBoard) -> Optional[int]:
     root = MCTSNode(state=copy.deepcopy(root_state))
@@ -29,6 +31,19 @@ class MCTSPlayer:
 
       # 4) Backpropagation
       self.backpropagate(node, result)
+
+    # Build policy vector (normalized visit counts)
+    total_visits = sum(child.visits for child in root.children)
+    policy = np.zeros(root_state.number_of_rows * root_state.number_of_columns)
+    for child in root.children:
+      policy[child.action] = child.visits / total_visits
+
+    # Save (state, policy) to memory — value is added later after game ends
+    self.memory.append({
+      "state": copy.deepcopy(root_state),
+      "policy": policy,
+      "player": root_state.current_player
+    })
 
     # Choose the move with most visits
     if not root.children:
@@ -69,3 +84,9 @@ class MCTSPlayer:
       # invert result for parent's perspective? No need if we keep result as root_player perspective,
       # but if you want wins to be from node.state.current_player's perspective, you'd flip.
       node = node.parent
+
+  def record_game_result(self, result: float):
+    """Call this at the end of the game"""
+    for entry in self.memory:
+      # value = +1 if same as winner, -1 if loser
+      entry["value"] = result if entry["player"] == 1 else -result

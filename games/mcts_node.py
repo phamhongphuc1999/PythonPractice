@@ -30,7 +30,8 @@ class MCTSNode:
   
   def best_child(self, c_param: float = 1.4) -> "MCTSNode":
     """Return child with highest UCB1 score."""
-    assert self.children, "No children to select from"
+    if len(self.children) == 0:
+      raise ValueError("No children to select from")
     parent_visits = max(1, self.visits)
     scores = []
     for child in self.children:
