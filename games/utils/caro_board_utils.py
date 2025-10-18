@@ -11,7 +11,6 @@ class CaroWinType(str, Enum):
     VERTICAL = "vertical"
     HORIZONTAL = "horizontal"
 
-
 class ParamsType(TypedDict):
     steps: Dict[int, int]
     currentStep: int
