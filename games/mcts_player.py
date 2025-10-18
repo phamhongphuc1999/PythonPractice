@@ -1,13 +1,13 @@
 import copy
 import random
-from typing import List, Optional, TypedDict
+from typing import Dict, List, Optional, TypedDict
 from mcts_node import MCTSNode
 from game_board import GameBoard
 from typing import Literal
 import numpy as np
 
 class MemoryType(TypedDict):
-    state: GameBoard
+    steps: Dict[int, Literal[1, 2]]
     policy: np.ndarray[tuple[int], np.dtype[np.float64]]
     current_player: Literal[1, 2]
 
@@ -45,7 +45,7 @@ class MCTSPlayer:
 
     # Save (state, policy) to memory — value is added later after game ends
     self.memory.append({
-      "state": copy.deepcopy(root_state),
+      "steps": copy.deepcopy(root_state.steps),
       "policy": policy,
       "player": root_state.current_player
     })

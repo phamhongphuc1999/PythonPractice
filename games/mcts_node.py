@@ -7,7 +7,7 @@ import copy
 EPS = 1e-6
 
 class MCTSNode:
-  def __init__(self, state: GameBoard, parent: Optional["MCTSNode"] = None, action: Optional[int] = None):
+  def __init__(self, state: GameBoard, parent: Optional["MCTSNode"] = None, action: Optional[int] = None, prior_prob: float = 1.0):
     self.state: GameBoard = state
     self.parent: Optional[MCTSNode] = parent
     self.action: Optional[int] = action
@@ -15,6 +15,7 @@ class MCTSNode:
     self.visits: int = 0
     self.wins: float = 0.0
     self.untried_moves: List[int] = list(state.get_legal_moves())
+    self.prior_prob = prior_prob
   
   def is_fully_expanded(self) -> bool:
     return len(self.untried_moves) == 0

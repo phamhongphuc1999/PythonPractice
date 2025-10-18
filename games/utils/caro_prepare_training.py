@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List, Literal
 from game_board import GameBoard
 import numpy as np
 
@@ -6,12 +6,10 @@ from mcts_player import MCTSPlayer, MemoryType
 
 class CaroPrepareTraining:
   @staticmethod
-  def board_to_tensor(board: GameBoard, current_player: int) -> np.ndarray:
-    number_of_rows = board.number_of_rows
-    number_of_columns = board.number_of_columns
+  def board_to_tensor(number_of_rows: int, number_of_columns: int, steps: Dict[int, Literal[1, 2]], current_player: int) -> np.ndarray:
     tensor = np.zeros((2, number_of_rows, number_of_columns), dtype=np.float32)
 
-    for pos, player in board.steps.items():
+    for pos, player in steps.items():
       row, col = divmod(pos, number_of_columns)
       tensor[player - 1, row, col] = 1.0
 
@@ -40,7 +38,7 @@ class CaroPrepareTraining:
   def prepare_training_data(number_of_rows: int, number_of_columns: int, num_games=50):
     data = CaroPrepareTraining.self_play(number_of_rows, number_of_columns, num_games=num_games)
 
-    X = np.array([CaroPrepareTraining.board_to_tensor(d["state"], d["player"]) for d in data])
+    X = np.array([CaroPrepareTraining.board_to_tensor(number_of_rows, number_of_columns, d["steps"], d["player"]) for d in data])
     Y_policy = np.array([d["policy"] for d in data])
     Y_value = np.array([[d["value"]] for d in data])
     return X, Y_policy, Y_value, data
