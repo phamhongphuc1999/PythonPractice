@@ -1,19 +1,20 @@
+from typing import Literal
 import numpy as np
 import torch
 from caro_net import CaroNet
 from game_board import GameBoard
-from utils.caro_prepare_training import CaroPrepareTraining
+from utils import board_to_tensor
 
 class CaroPredictor:
-  def __init__(self, number_of_rows: int, number_of_columns: int, trained_model_path: str):
-    self.number_of_rows = number_of_rows
-    self.number_of_columns = number_of_columns
-    self.model = CaroNet(number_of_rows, number_of_columns)
+  def __init__(self, size: Literal[10, 20], trained_model_path: str, **kwargs):
+    self.size = size
+    self.model = CaroNet(size, size)
     self.model.load_state_dict(torch.load(trained_model_path))
     self.model.eval()
+    super().__init__(**kwargs)
 
   def evaluate(self, board: GameBoard):
-    board_tensor = CaroPrepareTraining.board_to_tensor(self.number_of_rows, self.number_of_columns, board.steps, board.current_player)
+    board_tensor = board_to_tensor(self.size, self.size, board.steps, board.current_player)
     x = torch.tensor(board_tensor, dtype=torch.float32).unsqueeze(0)
     with torch.no_grad():
       predicted_policy, predicted_value = self.model(x)
@@ -26,7 +27,7 @@ class CaroPredictor:
       max_move = -1
       for move in legal_moves:
         row, col = divmod(move, board.number_of_columns)
-        standard_move = row * self.number_of_columns + col
+        standard_move = row * self.size + col
         masked_policy[move] = policy[standard_move]
         if policy[standard_move] > max_percent:
           max_percent = policy[standard_move]

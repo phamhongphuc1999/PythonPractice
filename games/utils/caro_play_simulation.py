@@ -1,5 +1,7 @@
 import random
+from typing import Literal
 from game_board import GameBoard
+from mcts_cnn_player import MctsCnnPlayer
 from mcts_player import MCTSPlayer
 
 
@@ -35,9 +37,9 @@ class CaroPlaySimulation:
         print("It's a draw!")
         break
 
-  def play_game(number_of_rows=3, number_of_columns=3, number_to_win=3, num_simulations=300):
+  def play_game(number_of_rows=3, number_of_columns=3, number_to_win=3, num_simulations=300, size: Literal[10, 20] = None, trained_model_path: str = None):
     board = GameBoard(number_of_rows=number_of_rows, number_of_columns=number_of_columns, number_to_win=number_to_win)
-    mcts = MCTSPlayer(num_simulations=num_simulations)
+    mcts = MCTSPlayer(num_simulations=num_simulations) if size is None or trained_model_path is None else MctsCnnPlayer(size, trained_model_path, num_simulations=num_simulations)
     print(f"=== Caro ({board.number_of_rows}x{board.number_of_columns}) Demo: MCTS vs Random ===")
 
     while not board.is_terminal():

@@ -1,21 +1,18 @@
 import copy
 import random
-from typing import Dict, List, Optional, TypedDict
+from typing import List, Optional
+from utils.type import MemoryType
 from mcts_node import MCTSNode
 from game_board import GameBoard
 from typing import Literal
 import numpy as np
 
-class MemoryType(TypedDict):
-    steps: Dict[int, Literal[1, 2]]
-    policy: np.ndarray[tuple[int], np.dtype[np.float64]]
-    current_player: Literal[1, 2]
-
 class MCTSPlayer:
-  def __init__(self, num_simulations: int = 1000, c_param: float = 1.4) -> None:
+  def __init__(self, num_simulations: int = 1000, c_param: float = 1.4, **kwargs):
     self.num_simulations = num_simulations
     self.c_param = c_param
     self.memory: List[MemoryType] = []
+    super().__init__(**kwargs)
 
   def run(self, root_state: GameBoard) -> Optional[int]:
     root = MCTSNode(state=copy.deepcopy(root_state))

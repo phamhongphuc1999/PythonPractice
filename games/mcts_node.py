@@ -1,6 +1,7 @@
 from __future__ import annotations
 import math
 from typing import List, Optional
+
 from game_board import GameBoard
 import copy
 
@@ -29,6 +30,15 @@ class MCTSNode:
     self.children.append(child)
     return child
   
+  def ai_expand(self, masked_policy: List[float]):
+    """Expand node using NN policy probabilities for legal moves."""
+    for move in self.state.get_legal_moves():
+      prob = masked_policy[move]
+      new_state = copy.deepcopy(self.state)
+      new_state.move(move)
+      child = MCTSNode(state=new_state, parent=self, action=move, prior_prob=prob)
+      self.children.append(child)
+  
   def best_child(self, c_param: float = 1.4) -> "MCTSNode":
     """Return child with highest UCB1 score."""
     if len(self.children) == 0:
@@ -41,3 +51,16 @@ class MCTSNode:
       scores.append(exploitation + exploration)
     best_idx = scores.index(max(scores))
     return self.children[best_idx]
+  
+  def best_ai_child(self, c_param: float = 1.4) -> "MCTSNode":
+    total_visits = sum(child.visits for child in self.children) + EPS
+    best_score = -float('inf')
+    best_child = None
+    for child in self.children:
+      q_value = child.wins / (child.visits + EPS)
+      u_value = c_param * child.prior_prob * math.sqrt(total_visits) / (1 + child.visits)
+      score = q_value + u_value
+      if score > best_score:
+        best_score = score
+        best_child = child
+    return best_child
