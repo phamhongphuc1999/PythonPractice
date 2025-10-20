@@ -8,7 +8,7 @@ from utils.type import MemoryType
 import numpy as np
 
 class MctsCnnPlayer(CaroPredictor, MCTSPlayer):
-  def __init__(self, size: Literal[10, 20], trained_model_path: str, num_simulations: int = 100, c_param: float = 1.4):
+  def __init__(self, size: Literal[10, 20], trained_model_path: str, num_simulations: int = 1000, c_param: float = 1.4):
     super().__init__(size, trained_model_path, num_simulations=num_simulations, c_param=c_param)
     self.memory: List[MemoryType] = []
 
@@ -48,15 +48,3 @@ class MctsCnnPlayer(CaroPredictor, MCTSPlayer):
     
     best_child = max(root.children, key=lambda c: c.visits)
     return best_child.action
-  
-  # def backpropagate(self, node: Optional[MCTSNode], result: float) -> None:
-  #   while node is not None:
-  #     node.visits += 1
-  #     node.wins += result
-  #     node = node.parent
-
-  # def record_game_result(self, result: float):
-  #   """Call this at the end of the game"""
-  #   for entry in self.memory:
-  #     # value = +1 if same as winner, -1 if loser
-  #     entry["value"] = result if entry["player"] == 1 else -result
