@@ -1,19 +1,16 @@
-from caro_predictor import CaroPredictor
-from game_board import GameBoard
+from tictactoe.tictactoe import TicTacToe
+
 
 if __name__ == '__main__':
-  number_of_rows = 3
-  number_of_columns = 3
-
-  board = GameBoard(number_of_rows=number_of_rows, number_of_columns=number_of_columns, number_to_win=3)
-  ai_player = CaroPredictor(10, "trained/caronet_weights_1760763011.pth")
-
-  board.move(0)
-  masked_policy, value, move, percent = ai_player.evaluate(board)
-  print("move: ",value, move, percent)
-  for i in range(0, number_of_rows):
-    for j in range(0, number_of_columns):
-      print(masked_policy[i * number_of_columns + j])
-    print('\n')
-
-  print("masked_policy: ", masked_policy)
+  caro_board = TicTacToe()
+  board = caro_board.initial_state
+  board, won = caro_board.move(board, 0, 0)
+  print("caro_board.convert_mcts_state_to_list_state(board)", caro_board.convert_mcts_state_to_list_state(board), won)
+  board, won = caro_board.move(board, 1, 1)
+  print("caro_board.convert_mcts_state_to_list_state(board)", caro_board.convert_mcts_state_to_list_state(board), won)
+  board, won = caro_board.move(board, 3, 0)
+  print("caro_board.convert_mcts_state_to_list_state(board)", caro_board.convert_mcts_state_to_list_state(board), won)
+  board, won = caro_board.move(board, 5, 1)
+  print("caro_board.convert_mcts_state_to_list_state(board)", caro_board.convert_mcts_state_to_list_state(board), won)
+  board, won = caro_board.move(board, 6, 0)
+  print("caro_board.convert_mcts_state_to_list_state(board)", caro_board.convert_mcts_state_to_list_state(board), won)
