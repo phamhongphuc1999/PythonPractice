@@ -10,6 +10,8 @@ def add_game_argument(parser):
     """
     parser.add_argument("-g", "--game", required=True, choices=['0', '1'],
                         help="The type of game. 0: Connect4, 1: TicTacToe")
+    parser.add_argument("-s", '--size', required=False)
+    parser.add_argument("-ws", '--winSize', required=False)
 
 
 def get_game(args):
@@ -19,4 +21,7 @@ def get_game(args):
         args: parsed args from ArgumentParser)
     """
     game_type = args.game
-    return ConnectFour() if game_type == '0' else TicTacToe()
+    _size = int(args.size) if args.size is not None else 3
+    _k_to_win = int(args.winSize) if args.winSize is not None else 3
+    print("_size: ", _size, ", k_to_win: ", _k_to_win)
+    return ConnectFour() if game_type == '0' else TicTacToe(n=_size, k_to_win=_k_to_win)
