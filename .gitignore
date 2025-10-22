@@ -5,3 +5,5 @@ data/
 **/.venv
 **/*.log
 **/__pycache__
+games_cython/
+emsdk/
