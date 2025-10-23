@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import math
 import os
 import sys
 import time
@@ -22,7 +23,14 @@ from mcts.mcts import MCTS
 Optimizer = torch.optim.Optimizer
 
 
-def self_play(game: BaseGame, mcts_store: MCTS, replay_buffer: Union[collections.deque, None], model: Net, tb_tracker, device: str) -> None:
+def self_play(
+    game: BaseGame,
+    mcts_store: MCTS,
+    replay_buffer: Union[collections.deque, None],
+    model: Net,
+    tb_tracker,
+    device: str,
+) -> None:
     """Let the (current best) model play against itself to generate training data.
     Store the moves into a replay buffer.
 
@@ -38,12 +46,19 @@ def self_play(game: BaseGame, mcts_store: MCTS, replay_buffer: Union[collections
     t = time.time()
     prev_nodes = len(mcts_store)
     game_steps = 0
-    for _ in range(cfg.PLAY_EPISODES):
-        _, steps = play_game(game, mcts_store, replay_buffer,
-                            best_net.target_model, best_net.target_model,
-                            steps_before_tau_0=cfg.STEPS_BEFORE_TAU_0,
-                            mcts_searches=cfg.MCTS_SEARCHES,
-                            mcts_batch_size=cfg.MCTS_BATCH_SIZE, device=device)
+    for __index in range(cfg.PLAY_EPISODES):
+        print(f"__index: {__index}/{cfg.PLAY_EPISODES}", end="\r")
+        _, steps = play_game(
+            game,
+            mcts_store,
+            replay_buffer,
+            best_net.target_model,
+            best_net.target_model,
+            steps_before_tau_0=cfg.STEPS_BEFORE_TAU_0,
+            mcts_searches=cfg.MCTS_SEARCHES,
+            mcts_batch_size=cfg.MCTS_BATCH_SIZE,
+            device=device,
+        )
         game_steps += steps
     game_nodes = len(mcts_store) - prev_nodes
     dt = time.time() - t
@@ -53,12 +68,30 @@ def self_play(game: BaseGame, mcts_store: MCTS, replay_buffer: Union[collections
     tb_tracker.track("speed_nodes", speed_nodes, step_idx)
     sys.stdout.flush()
     buffer_len = len(replay_buffer) if replay_buffer else 0
-    print("Step %d, steps %3d, leaves %4d, steps/s %5.2f, leaves/s %6.2f, best_idx %d, replay %d" % (
-        step_idx, game_steps, game_nodes, speed_steps, speed_nodes, best_idx, buffer_len),
-        end='\r')
+    print(
+        "__index: %d/%d, Step %d, steps %3d, leaves %4d, steps/s %5.2f, leaves/s %6.2f, best_idx %d, replay %d"
+        % (
+            0,
+            cfg.PLAY_EPISODES,
+            step_idx,
+            game_steps,
+            game_nodes,
+            speed_steps,
+            speed_nodes,
+            best_idx,
+            buffer_len,
+        ),
+        end="\r",
+    )
 
 
-def train_neural_net(game: BaseGame, replay_buffer: collections.deque, optimizer: Optimizer, tb_tracker, device: str) -> None:
+def train_neural_net(
+    game: BaseGame,
+    replay_buffer: collections.deque,
+    optimizer: Optimizer,
+    tb_tracker,
+    device: str,
+) -> None:
     """Give a replay buffer that is sufficiently large, train the neural net
     using data from replay buffer in batches.
 
@@ -81,10 +114,8 @@ def train_neural_net(game: BaseGame, replay_buffer: collections.deque, optimizer
         # PyTorch is trained in batches. We process data batches here into tensors
         # that can be fed into the neural net for training
         batch = random.sample(replay_buffer, cfg.BATCH_SIZE)
-        batch_states, batch_who_moves, batch_probs, batch_values = zip(
-            *batch)
-        states_v = game.states_to_training_batch(
-            batch_states, batch_who_moves)
+        batch_states, batch_who_moves, batch_probs, batch_values = zip(*batch)
+        states_v = game.states_to_training_batch(batch_states, batch_who_moves)
         states_tensor = torch.tensor(states_v).to(device)
 
         optimizer.zero_grad()
@@ -113,7 +144,9 @@ def train_neural_net(game: BaseGame, replay_buffer: collections.deque, optimizer
     tb_tracker.track("loss_policy", sum_policy_loss / TRAIN_ROUNDS, step_idx)
 
 
-def evaluate(game: BaseGame, challenger: Net, champion: Net, rounds: int, device: str = "cpu") -> float:
+def evaluate(
+    game: BaseGame, challenger: Net, champion: Net, rounds: int, device: str = "cpu"
+) -> float:
     """Evaluate performance of 2 neural nets trained to play game by letting them
     play rounds against each other.
 
@@ -131,10 +164,17 @@ def evaluate(game: BaseGame, challenger: Net, champion: Net, rounds: int, device
     mcts_stores = [MCTS(game), MCTS(game)]
 
     for r_idx in range(rounds):
-        r, _ = play_game(game=game, mcts_stores=mcts_stores, replay_buffer=None,
-                        net1=challenger, net2=champion,
-                        steps_before_tau_0=0, mcts_searches=20, mcts_batch_size=16,
-                        device=device)
+        r, _ = play_game(
+            game=game,
+            mcts_stores=mcts_stores,
+            replay_buffer=None,
+            net1=challenger,
+            net2=champion,
+            steps_before_tau_0=0,
+            mcts_searches=20,
+            mcts_batch_size=16,
+            device=device,
+        )
         if r < -0.5:
             champion_win += 1
         elif r > 0.5:
@@ -151,8 +191,9 @@ def parse_args():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", "--name", required=True, help="Name of the run")
-    parser.add_argument("--cuda", default=False,
-                        action="store_true", help="Enable CUDA")
+    parser.add_argument(
+        "--cuda", default=False, action="store_true", help="Enable CUDA"
+    )
     game_provider.add_game_argument(parser)
     return parser.parse_args()
 
@@ -170,9 +211,12 @@ if __name__ == "__main__":
     model_shape = game.obs_shape
 
     net = Net(input_shape=model_shape, actions_n=game.action_space).to(device)
+    # net.load_state_dict(torch.load(
+    #         'saves/caro_10x10/best_004_03300.dat', map_location=lambda storage, loc: storage))
     best_net = NetWrapper(net)
 
-    optimizer = optim.SGD(net.parameters(), lr=cfg.LEARNING_RATE, momentum=0.9)
+    # optimizer = optim.SGD(net.parameters(), lr=cfg.LEARNING_RATE, momentum=0.9)
+    optimizer = optim.Adam(net.parameters(), lr=cfg.LEARNING_RATE)
 
     replay_buffer = collections.deque(maxlen=cfg.REPLAY_BUFFER)
     mcts_store = MCTS(game)
@@ -183,8 +227,14 @@ if __name__ == "__main__":
         # Theoretically training loop can continue forever
         # to produce better & better agents
         while True:
-            self_play(game, mcts_store, replay_buffer,
-                    best_net.target_model, tb_tracker, device)
+            self_play(
+                game,
+                mcts_store,
+                replay_buffer,
+                best_net.target_model,
+                tb_tracker,
+                device,
+            )
             step_idx += 1
 
             if len(replay_buffer) < cfg.MIN_REPLAY_TO_TRAIN:
@@ -195,8 +245,13 @@ if __name__ == "__main__":
 
             # evaluate net, then replace best net if performance is satisfactory
             if step_idx % cfg.EVALUATE_EVERY_STEP == 0:
-                win_ratio = evaluate(game,
-                                    net, best_net.target_model, rounds=cfg.EVALUATION_ROUNDS, device=device)
+                win_ratio = evaluate(
+                    game,
+                    net,
+                    best_net.target_model,
+                    rounds=cfg.EVALUATION_ROUNDS,
+                    device=device,
+                )
                 print("Net evaluated, win ratio = %.2f" % win_ratio)
                 writer.add_scalar("eval_win_ratio", win_ratio, step_idx)
                 if win_ratio > cfg.BEST_NET_WIN_RATIO:
@@ -204,6 +259,14 @@ if __name__ == "__main__":
                     best_net.sync()
                     best_idx += 1
                     file_name = os.path.join(
-                        saves_path, "best_%03d_%05d.dat" % (best_idx, step_idx))
+                        saves_path, "best_%03d_%05d.dat" % (best_idx, step_idx)
+                    )
                     torch.save(net.state_dict(), file_name)
                     mcts_store.clear()
+                else:
+                    print("Checkpoint")
+                    file_name = os.path.join(
+                        saves_path,
+                        f"checkpoint_{win_ratio}_{best_idx}_{step_idx}_{math.floor(time.time())}",
+                    )
+                    torch.save(net.state_dict(), file_name)

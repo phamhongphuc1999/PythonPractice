@@ -35,5 +35,4 @@ class TestBackup:
         # Remember to flip the sign of value at each turn
         assert tree.value == {1: [0.0, 0.3], 2: [0.8, 0.0], 3: [-0.2, 0.0]}
         # Mean value over visit_count
-        assert tree.value_avg == {
-            1: [0.0, 0.15], 2: [0.4, 0.0], 3: [-0.2, 0.0]}
+        assert tree.value_avg == {1: [0.0, 0.15], 2: [0.4, 0.0], 3: [-0.2, 0.0]}

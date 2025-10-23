@@ -57,8 +57,7 @@ class TicTacToe(BaseGame):
         """The initial state of the game in MCTS form. This is used in
         utils.play_game to start the MCTS loop.
         """
-        empty_board = np.full(
-            (self.board_len, self.board_len), self.empty).tolist()
+        empty_board = np.full((self.board_len, self.board_len), self.empty).tolist()
         return self.encode_game_state(empty_board)
 
     @property
@@ -83,7 +82,7 @@ class TicTacToe(BaseGame):
         Returns:
             (int): count of total possible actions
         """
-        return self.board_len ** 2
+        return self.board_len**2
 
     def _pad_mcts_state(self, mcts_state_str: str) -> str:
         """Since the game state in int form might have leading zeroes,
@@ -96,7 +95,7 @@ class TicTacToe(BaseGame):
             str: String of game state in MCTS-friendly form, padded
             to appropriate length with leading zeroes
         """
-        return mcts_state_str.rjust(self.board_len ** 2, "0")
+        return mcts_state_str.rjust(self.board_len**2, "0")
 
     def encode_game_state(self, state_list: Matrix) -> int:
         """Convert game state from Matrix form to MCTS-friendly form (int)
@@ -110,7 +109,7 @@ class TicTacToe(BaseGame):
         """
         flattened = self.flatten_nested_list(state_list)
         stringified = [str(i) for i in flattened]
-        return int(''.join(stringified))
+        return int("".join(stringified))
 
     def convert_mcts_state_to_list_state(self, mcts_state: int) -> Matrix:
         """Convert game state from more compact, hashable i.e. MCTS-friendly form
@@ -160,7 +159,9 @@ class TicTacToe(BaseGame):
         padded = self._pad_mcts_state(str(mcts_state))
         return [i for i, c in enumerate(padded) if c != str(self.empty)]
 
-    def _encode_list_state(self, dest_np: np.ndarray, state: Matrix, who_move: int) -> None:
+    def _encode_list_state(
+        self, dest_np: np.ndarray, state: Matrix, who_move: int
+    ) -> None:
         """
         In-place encodes list state into the zero numpy array
         :param dest_np: dest array, expected to be zeroes
@@ -175,8 +176,9 @@ class TicTacToe(BaseGame):
                 elif cell != self.empty:
                     dest_np[1, row_idx, col_idx] = 1.0
 
-    def states_to_training_batch(self, state_ints: List[int],
-                                 who_moves_lists: List[int]) -> np.ndarray:
+    def states_to_training_batch(
+        self, state_ints: List[int], who_moves_lists: List[int]
+    ) -> np.ndarray:
         """Convert game states to arrays that can be fed to neural network
 
         Args:
@@ -229,7 +231,8 @@ class TicTacToe(BaseGame):
         row_idx, col_idx = divmod(move, self.board_len)
         board[row_idx][col_idx] = player
         won = tictactoe_helpers.check_win(
-            board, (row_idx, col_idx), self.k_to_win, player)
+            board, (row_idx, col_idx), self.k_to_win, player
+        )
         new_mcts_state = self.encode_game_state(board)
         return new_mcts_state, won
 
@@ -247,12 +250,13 @@ class TicTacToe(BaseGame):
             for col_idx, cell in enumerate(row):
                 if cell == self.empty:
                     list_state[row_idx][col_idx] = str(
-                        row_idx * self.board_len + col_idx)
+                        row_idx * self.board_len + col_idx
+                    )
                 elif cell == self.player_white:
                     list_state[row_idx][col_idx] = "❌"
                 elif cell == self.player_black:
                     list_state[row_idx][col_idx] = "⭕"
         # substitute semi-colons with pipe |
         list_str = [f'|{"|".join(row)}|' for row in list_state]
-        board = '\n'.join(list_str).replace(',', '')
+        board = "\n".join(list_str).replace(",", "")
         return board

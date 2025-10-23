@@ -8,7 +8,9 @@ from mcts.mcts import MCTS
 from model import Net
 
 
-def update_counts(counts_dict: Dict, key: Union[str, Tuple[str, str]], counts: Tuple[int, int, int]) -> None:
+def update_counts(
+    counts_dict: Dict, key: Union[str, Tuple[str, str]], counts: Tuple[int, int, int]
+) -> None:
     """Update counts_dict with win, lose, draw from counts if key exist.
     Else initialize new entry with 0, 0, 0
     Key can be a string representing a model name, or a tuple representing
@@ -24,10 +26,18 @@ def update_counts(counts_dict: Dict, key: Union[str, Tuple[str, str]], counts: T
     counts_dict[key] = res
 
 
-def play_game(game: BaseGame, mcts_stores, replay_buffer: Union[collections.deque, None],
-              net1: Net, net2: Net,
-              steps_before_tau_0: int, mcts_searches: int, mcts_batch_size: int,
-              net1_plays_first: bool = None, device: str = "cpu"):
+def play_game(
+    game: BaseGame,
+    mcts_stores,
+    replay_buffer: Union[collections.deque, None],
+    net1: Net,
+    net2: Net,
+    steps_before_tau_0: int,
+    mcts_searches: int,
+    mcts_batch_size: int,
+    net1_plays_first: bool = None,
+    device: str = "cpu",
+):
     """
     Play one single game, memorizing transitions into the replay buffer
     :param net1: player1
@@ -77,10 +87,14 @@ def play_game(game: BaseGame, mcts_stores, replay_buffer: Union[collections.dequ
 
     while result is None:
         mcts_stores[cur_player].search_batch(
-            mcts_searches, mcts_batch_size, state,
-            cur_player, nets[cur_player], device=device)
-        probs, _ = mcts_stores[cur_player].get_policy_value(
-            state, tau=tau)
+            mcts_searches,
+            mcts_batch_size,
+            state,
+            cur_player,
+            nets[cur_player],
+            device=device,
+        )
+        probs, _ = mcts_stores[cur_player].get_policy_value(state, tau=tau)
         game_history.append((state, cur_player, probs))
         action = np.random.choice(game.action_space, p=probs)
         if action not in game.possible_moves(state):
@@ -90,7 +104,7 @@ def play_game(game: BaseGame, mcts_stores, replay_buffer: Union[collections.dequ
             result = 1
             net1_result = 1 if cur_player == 0 else -1
             break
-        cur_player = 1-cur_player
+        cur_player = 1 - cur_player
         # check the draw case
         if len(game.possible_moves(state)) == 0:
             result = 0
@@ -102,9 +116,7 @@ def play_game(game: BaseGame, mcts_stores, replay_buffer: Union[collections.dequ
 
     if replay_buffer is not None:
         for state, cur_player, probs in reversed(game_history):
-            replay_buffer.append(
-                (state, cur_player, probs, result)
-            )
+            replay_buffer.append((state, cur_player, probs, result))
             result = -result
 
     return net1_result, step
@@ -135,8 +147,9 @@ class TBMeanTracker:
 
     @staticmethod
     def _as_float(value):
-        assert isinstance(value, (float, int, np.ndarray, np.generic,
-                        torch.autograd.Variable)) or torch.is_tensor(value)
+        assert isinstance(
+            value, (float, int, np.ndarray, np.generic, torch.autograd.Variable)
+        ) or torch.is_tensor(value)
         tensor_val = None
         if isinstance(value, torch.autograd.Variable):
             tensor_val = value.data

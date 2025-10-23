@@ -14,62 +14,53 @@ class Net(nn.Module):
         self.conv_in = nn.Sequential(
             nn.Conv2d(input_shape[0], NUM_FILTERS, kernel_size=3, padding=1),
             nn.BatchNorm2d(NUM_FILTERS),
-            nn.LeakyReLU()
+            nn.LeakyReLU(),
         )
 
         # layers with residual
         self.conv_1 = nn.Sequential(
             nn.Conv2d(NUM_FILTERS, NUM_FILTERS, kernel_size=3, padding=1),
             nn.BatchNorm2d(NUM_FILTERS),
-            nn.LeakyReLU()
+            nn.LeakyReLU(),
         )
         self.conv_2 = nn.Sequential(
             nn.Conv2d(NUM_FILTERS, NUM_FILTERS, kernel_size=3, padding=1),
             nn.BatchNorm2d(NUM_FILTERS),
-            nn.LeakyReLU()
+            nn.LeakyReLU(),
         )
         self.conv_3 = nn.Sequential(
             nn.Conv2d(NUM_FILTERS, NUM_FILTERS, kernel_size=3, padding=1),
             nn.BatchNorm2d(NUM_FILTERS),
-            nn.LeakyReLU()
+            nn.LeakyReLU(),
         )
         self.conv_4 = nn.Sequential(
             nn.Conv2d(NUM_FILTERS, NUM_FILTERS, kernel_size=3, padding=1),
             nn.BatchNorm2d(NUM_FILTERS),
-            nn.LeakyReLU()
+            nn.LeakyReLU(),
         )
         self.conv_5 = nn.Sequential(
             nn.Conv2d(NUM_FILTERS, NUM_FILTERS, kernel_size=3, padding=1),
             nn.BatchNorm2d(NUM_FILTERS),
-            nn.LeakyReLU()
+            nn.LeakyReLU(),
         )
 
-        body_out_shape = (NUM_FILTERS, ) + input_shape[1:]
+        body_out_shape = (NUM_FILTERS,) + input_shape[1:]
 
         # value head
         self.conv_val = nn.Sequential(
-            nn.Conv2d(NUM_FILTERS, 1, kernel_size=1),
-            nn.BatchNorm2d(1),
-            nn.LeakyReLU()
+            nn.Conv2d(NUM_FILTERS, 1, kernel_size=1), nn.BatchNorm2d(1), nn.LeakyReLU()
         )
         conv_val_size = self._get_conv_val_size(body_out_shape)
         self.value = nn.Sequential(
-            nn.Linear(conv_val_size, 20),
-            nn.LeakyReLU(),
-            nn.Linear(20, 1),
-            nn.Tanh()
+            nn.Linear(conv_val_size, 20), nn.LeakyReLU(), nn.Linear(20, 1), nn.Tanh()
         )
 
         # policy head
         self.conv_policy = nn.Sequential(
-            nn.Conv2d(NUM_FILTERS, 2, kernel_size=1),
-            nn.BatchNorm2d(2),
-            nn.LeakyReLU()
+            nn.Conv2d(NUM_FILTERS, 2, kernel_size=1), nn.BatchNorm2d(2), nn.LeakyReLU()
         )
         conv_policy_size = self._get_conv_policy_size(body_out_shape)
-        self.policy = nn.Sequential(
-            nn.Linear(conv_policy_size, actions_n)
-        )
+        self.policy = nn.Sequential(nn.Linear(conv_policy_size, actions_n))
 
     def _get_conv_val_size(self, shape):
         o = self.conv_val(torch.zeros(1, *shape))

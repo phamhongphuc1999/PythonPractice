@@ -120,7 +120,7 @@ class ConnectFour(BaseGame):
         len_bits = []
         for col in field_lists:
             bits.extend(col)
-            free_len = self.game_rows-len(col)
+            free_len = self.game_rows - len(col)
             bits.extend([0] * free_len)
             len_bits.extend(self.int_to_bits(free_len, bits=self.bits_in_len))
         bits.extend(len_bits)
@@ -133,14 +133,17 @@ class ConnectFour(BaseGame):
         :return: list of GAME_COLS lists
         """
         assert isinstance(state_int, int)
-        bits = self.int_to_bits(state_int,
-                                bits=self.game_cols*self.game_rows + self.game_cols*self.bits_in_len)
+        bits = self.int_to_bits(
+            state_int,
+            bits=self.game_cols * self.game_rows + self.game_cols * self.bits_in_len,
+        )
         res = []
-        len_bits = bits[self.game_cols*self.game_rows:]
+        len_bits = bits[self.game_cols * self.game_rows :]
         for col in range(self.game_cols):
-            vals = bits[col*self.game_rows:(col+1)*self.game_rows]
+            vals = bits[col * self.game_rows : (col + 1) * self.game_rows]
             lens = self.bits_to_int(
-                len_bits[col*self.bits_in_len:(col+1)*self.bits_in_len])
+                len_bits[col * self.bits_in_len : (col + 1) * self.bits_in_len]
+            )
             if lens > 0:
                 vals = vals[:-lens]
             res.append(vals)
@@ -172,7 +175,9 @@ class ConnectFour(BaseGame):
         """
         return list(set(range(self.game_cols)) - set(self.possible_moves(state_int)))
 
-    def _encode_list_state(self, dest_np: np.ndarray, state_list: Matrix, who_move: int) -> None:
+    def _encode_list_state(
+        self, dest_np: np.ndarray, state_list: Matrix, who_move: int
+    ) -> None:
         """
         In-place encodes list state into the zero numpy array
         :param dest_np: dest array, expected to be zero
@@ -189,7 +194,9 @@ class ConnectFour(BaseGame):
                 else:
                     dest_np[1, row_idx, col_idx] = 1.0
 
-    def states_to_training_batch(self, state_ints: List[int], who_moves_lists) -> np.ndarray:
+    def states_to_training_batch(
+        self, state_ints: List[int], who_moves_lists
+    ) -> np.ndarray:
         """
         Convert list of list states to batch for network
         :param state_ints: list of game states
@@ -212,12 +219,16 @@ class ConnectFour(BaseGame):
         :return: True if won, False if not
         """
         player = field[col][-1]
-        coord = len(field[col])-1
+        coord = len(field[col]) - 1
         total = 1
         # negative dir
         cur_coord = coord - delta_row
-        for c in range(col-1, -1, -1):
-            if len(field[c]) <= cur_coord or cur_coord < 0 or cur_coord >= self.game_rows:
+        for c in range(col - 1, -1, -1):
+            if (
+                len(field[c]) <= cur_coord
+                or cur_coord < 0
+                or cur_coord >= self.game_rows
+            ):
                 break
             if field[c][cur_coord] != player:
                 break
@@ -227,8 +238,12 @@ class ConnectFour(BaseGame):
             cur_coord -= delta_row
         # positive dir
         cur_coord = coord + delta_row
-        for c in range(col+1, self.game_cols):
-            if len(field[c]) <= cur_coord or cur_coord < 0 or cur_coord >= self.game_rows:
+        for c in range(col + 1, self.game_cols):
+            if (
+                len(field[c]) <= cur_coord
+                or cur_coord < 0
+                or cur_coord >= self.game_rows
+            ):
                 break
             if field[c][cur_coord] != player:
                 break
@@ -255,27 +270,31 @@ class ConnectFour(BaseGame):
         assert len(field[col]) < self.game_rows
         field[col].append(player)
         # check for victory: the simplest vertical case
-        suff = field[col][-self.count_to_win:]
+        suff = field[col][-self.count_to_win :]
         won = suff == [player] * self.count_to_win
         if not won:
-            won = any((self._check_won(field, col, 0),
-                      self._check_won(field, col, 1),
-                      self._check_won(field, col, -1)))
+            won = any(
+                (
+                    self._check_won(field, col, 0),
+                    self._check_won(field, col, 1),
+                    self._check_won(field, col, -1),
+                )
+            )
         state_new = self.encode_lists(field)
         return state_new, won
 
     def _render_lines(self, state_list: Matrix) -> List[str]:
-        data = [[' '] * self.game_cols for _ in range(self.game_rows)]
+        data = [[" "] * self.game_cols for _ in range(self.game_rows)]
         for col_idx, col in enumerate(state_list):
             for rev_row_idx, cell in enumerate(col):
                 row_idx = self.game_rows - rev_row_idx - 1
                 data[row_idx][col_idx] = str(cell)
-        return [''.join(row) for row in data]
+        return ["".join(row) for row in data]
 
     def render(self, state_int: int) -> str:
         state_list = self.decode_binary(state_int)
         lines_str = self._render_lines(state_list)
         out = "\n".join(lines_str)
-        out = out.replace("0", 'O').replace("1", "X")
+        out = out.replace("0", "O").replace("1", "X")
         out_with_board = "0123456\n-------\n" + out + "\n-------\n0123456"
         return out_with_board

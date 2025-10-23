@@ -1,5 +1,4 @@
-"""Defining the interface for Game class
-"""
+"""Defining the interface for Game class"""
 
 from abc import ABC, abstractmethod
 from typing import Tuple, List
@@ -13,6 +12,7 @@ class BaseGame(ABC):
     The game state also needs to be converted into a form that can be fed to the
     Neural Network.
     """
+
     @property
     @abstractmethod
     def initial_state(self) -> int:
@@ -73,7 +73,9 @@ class BaseGame(ABC):
         pass
 
     @abstractmethod
-    def states_to_training_batch(self, state_lists: List, who_moves_lists: List[int]) -> np.ndarray:
+    def states_to_training_batch(
+        self, state_lists: List, who_moves_lists: List[int]
+    ) -> np.ndarray:
         """Convert game states into a form that can be used as training data
         for the neural net.
 

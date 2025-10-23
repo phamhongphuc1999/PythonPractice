@@ -1,6 +1,7 @@
 """
 Monte-Carlo Tree Search
 """
+
 import math as m
 import numpy as np
 import torch
@@ -53,16 +54,15 @@ class MCTS:
         """
         alpha = cfg.ALPHA
         explore = cfg.EXPLORE
-        noises = np.random.dirichlet(
-            [alpha] * self.game.action_space)
+        noises = np.random.dirichlet([alpha] * self.game.action_space)
         probs_with_noise = [
-            (1 - explore) * prob + explore * noise
-            for prob, noise in zip(probs, noises)
+            (1 - explore) * prob + explore * noise for prob, noise in zip(probs, noises)
         ]
         return probs_with_noise
 
-    def _calculate_upper_bound(self, values_avg: List[float], probs: List[float],
-                               counts: List[int]) -> List[float]:
+    def _calculate_upper_bound(
+        self, values_avg: List[float], probs: List[float], counts: List[int]
+    ) -> List[float]:
         """Calculate a score for each action at the current the game state
         from average values, probabilities & counts.
 
@@ -78,9 +78,8 @@ class MCTS:
         """
         total_sqrt = m.sqrt(sum(counts))
         return [
-            value + self.c_puct * prob * total_sqrt/(1+count)
-            for value, prob, count in
-            zip(values_avg, probs, counts)
+            value + self.c_puct * prob * total_sqrt / (1 + count)
+            for value, prob, count in zip(values_avg, probs, counts)
         ]
 
     def _mask_invalid_actions(self, scores: List[float], cur_state: int) -> None:
@@ -94,8 +93,9 @@ class MCTS:
         for invalid in invalid_actions:
             scores[invalid] = -np.inf
 
-    def find_leaf(self, state_int: StateInt,
-                  player: int) -> Tuple[Optional[float], StateInt, int, List[StateInt], List[int]]:
+    def find_leaf(
+        self, state_int: StateInt, player: int
+    ) -> Tuple[Optional[float], StateInt, int, List[StateInt], List[int]]:
         """
         Traverse the game tree from a game state until the end of game or leaf node
         (state which we have not seen before), keeping track of all visited
@@ -135,12 +135,11 @@ class MCTS:
             # Selet and record action with max score
             action = int(np.argmax(scores))
             actions.append(action)
-            cur_state, won = self.game.move(
-                cur_state, action, cur_player)
+            cur_state, won = self.game.move(cur_state, action, cur_player)
             if won:
                 # If somebody won the game, the value of the final state is -1 (as it is on opponent's turn)
                 value = -1.0
-            cur_player = 1-cur_player
+            cur_player = 1 - cur_player
             # Check for draw
             if value is None and len(self.game.possible_moves(cur_state)) == 0:
                 value = 0.0
@@ -159,8 +158,15 @@ class MCTS:
         """
         return state_int not in self.probs
 
-    def search_batch(self, count: int, batch_size: int, state_int: StateInt,
-                     player: int, net: Net, device: str = "cpu"):
+    def search_batch(
+        self,
+        count: int,
+        batch_size: int,
+        state_int: StateInt,
+        player: int,
+        net: Net,
+        device: str = "cpu",
+    ):
         """Perform several MCTS searches from the given game state
 
         Args:
@@ -172,8 +178,7 @@ class MCTS:
             device (str, optional): [description]. Defaults to "cpu".
         """
         for _ in range(count):
-            self.search_minibatch(batch_size, state_int,
-                                  player, net, device)
+            self.search_minibatch(batch_size, state_int, player, net, device)
 
     def _create_node(self, leaf_state: int, prob: List[float]):
         """Create new node in the game state tree
@@ -184,15 +189,20 @@ class MCTS:
                 queried from the neural network
         """
         action_space = self.game.action_space
-        self.visit_count[leaf_state] = [0]*action_space
-        self.value[leaf_state] = [0.0]*action_space
-        self.value_avg[leaf_state] = [0.0]*action_space
+        self.visit_count[leaf_state] = [0] * action_space
+        self.value[leaf_state] = [0.0] * action_space
+        self.value_avg[leaf_state] = [0.0] * action_space
         self.probs[leaf_state] = prob
 
-    def _expand_tree(self, expand_states: List[StateInt], expand_players: List[int],
-                     expand_queue: List[Tuple[int, List[int], List[int]]],
-                     backup_queue: List,
-                     net: Net, device: str = "cpu") -> None:
+    def _expand_tree(
+        self,
+        expand_states: List[StateInt],
+        expand_players: List[int],
+        expand_queue: List[Tuple[int, List[int], List[int]]],
+        backup_queue: List,
+        net: Net,
+        device: str = "cpu",
+    ) -> None:
         """With a queue of unencountered game states, batch query the network
         to get predicted probabilities for each action and predicted values
 
@@ -209,8 +219,7 @@ class MCTS:
             net (Net): Neural net to query action probabilities and game state value from
             device (str): cpu or gpu for PyTorch
         """
-        batch_v = self.game.states_to_training_batch(
-            expand_states, expand_players)
+        batch_v = self.game.states_to_training_batch(expand_states, expand_players)
         batch_tensor = torch.tensor(batch_v).to(device)
         logits_v, values_v = net(batch_tensor)
         probs_v = F.softmax(logits_v, dim=1)
@@ -218,7 +227,9 @@ class MCTS:
         probs = probs_v.data.cpu().numpy()
 
         # create the nodes
-        for (leaf_state, states, actions), value, prob in zip(expand_queue, values, probs):
+        for (leaf_state, states, actions), value, prob in zip(
+            expand_queue, values, probs
+        ):
             self._create_node(leaf_state, prob)
             backup_queue.append((value, states, actions))
 
@@ -236,17 +247,23 @@ class MCTS:
         # leaf state is not stored in states and actions,
         # so the value of the leaf will be the value of the opponent
         cur_value = -value
-        for state_int, action in zip(states[::-1],
-                                     actions[::-1]):
+        for state_int, action in zip(states[::-1], actions[::-1]):
             self.visit_count[state_int][action] += 1
             self.value[state_int][action] += cur_value
             # update the average value with new value
-            self.value_avg[state_int][action] = (self.value[state_int][action] /
-                                                 self.visit_count[state_int][action])
+            self.value_avg[state_int][action] = (
+                self.value[state_int][action] / self.visit_count[state_int][action]
+            )
             cur_value = -cur_value  # flip the sign after each turn
 
-    def search_minibatch(self, batch_size: int, state_int: StateInt, player: int,
-                         net: Net, device: str = "cpu") -> None:
+    def search_minibatch(
+        self,
+        batch_size: int,
+        state_int: StateInt,
+        player: int,
+        net: Net,
+        device: str = "cpu",
+    ) -> None:
         """
         Perform several MCTS searches. PyTorch neural net is queried in batches,
         thus it is more convenient to perform the MCTS in batches as well.
@@ -264,8 +281,9 @@ class MCTS:
         expand_queue = []
         planned = set()
         for _ in range(batch_size):
-            value, leaf_state, leaf_player, states, actions = \
-                self.find_leaf(state_int, player)
+            value, leaf_state, leaf_player, states, actions = self.find_leaf(
+                state_int, player
+            )
             if value is not None:
                 # reached terminal game state, can backup with actual reward
                 backup_queue.append((value, states, actions))
@@ -274,19 +292,21 @@ class MCTS:
                     planned.add(leaf_state)
                     expand_states.append(leaf_state)
                     expand_players.append(leaf_player)
-                    expand_queue.append((leaf_state, states,
-                                         actions))
+                    expand_queue.append((leaf_state, states, actions))
 
         # do expansion of nodes
         if expand_queue:
-            self._expand_tree(expand_states, expand_players,
-                              expand_queue, backup_queue, net, device)
+            self._expand_tree(
+                expand_states, expand_players, expand_queue, backup_queue, net, device
+            )
 
         # perform backup of the searches
         for value, states, actions in backup_queue:
             self._backup(value, states, actions)
 
-    def get_policy_value(self, state_int: StateInt, tau: int = 1) -> Tuple[List[float], List[float]]:
+    def get_policy_value(
+        self, state_int: StateInt, tau: int = 1
+    ) -> Tuple[List[float], List[float]]:
         """Extract policy and action-values by the state
         :return: (probs, values)
 
