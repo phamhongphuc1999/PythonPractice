@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 
-NUM_FILTERS = 64
+NUM_FILTERS = 128
 
 
 class Net(nn.Module):
@@ -39,6 +39,16 @@ class Net(nn.Module):
             nn.LeakyReLU(),
         )
         self.conv_5 = nn.Sequential(
+            nn.Conv2d(NUM_FILTERS, NUM_FILTERS, kernel_size=3, padding=1),
+            nn.BatchNorm2d(NUM_FILTERS),
+            nn.LeakyReLU(),
+        )
+        self.conv_6 = nn.Sequential(
+            nn.Conv2d(NUM_FILTERS, NUM_FILTERS, kernel_size=3, padding=1),
+            nn.BatchNorm2d(NUM_FILTERS),
+            nn.LeakyReLU(),
+        )
+        self.conv_7 = nn.Sequential(
             nn.Conv2d(NUM_FILTERS, NUM_FILTERS, kernel_size=3, padding=1),
             nn.BatchNorm2d(NUM_FILTERS),
             nn.LeakyReLU(),
@@ -78,6 +88,8 @@ class Net(nn.Module):
         v = v + self.conv_3(v)
         v = v + self.conv_4(v)
         v = v + self.conv_5(v)
+        v = v + self.conv_6(v)
+        v = v + self.conv_7(v)
         val = self.conv_val(v)
         val = self.value(val.view(batch_size, -1))
         pol = self.conv_policy(v)

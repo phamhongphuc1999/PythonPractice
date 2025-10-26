@@ -47,7 +47,7 @@ def self_play(
     prev_nodes = len(mcts_store)
     game_steps = 0
     for __index in range(cfg.PLAY_EPISODES):
-        print(f"__index: {__index}/{cfg.PLAY_EPISODES}", end="\r")
+        sys.stdout.write(f"\r__index: {__index}/{cfg.PLAY_EPISODES}")
         _, steps = play_game(
             game,
             mcts_store,
@@ -68,8 +68,8 @@ def self_play(
     tb_tracker.track("speed_nodes", speed_nodes, step_idx)
     sys.stdout.flush()
     buffer_len = len(replay_buffer) if replay_buffer else 0
-    print(
-        "__index: %d/%d, Step %d, steps %3d, leaves %4d, steps/s %5.2f, leaves/s %6.2f, best_idx %d, replay %d"
+    sys.stdout.write(
+        "\r__index: %d/%d, Step %d, steps %3d, leaves %4d, steps/s %5.2f, leaves/s %6.2f, best_idx %d, replay %d"
         % (
             0,
             cfg.PLAY_EPISODES,
@@ -81,7 +81,6 @@ def self_play(
             best_idx,
             buffer_len,
         ),
-        end="\r",
     )
 
 
@@ -212,7 +211,7 @@ if __name__ == "__main__":
 
     net = Net(input_shape=model_shape, actions_n=game.action_space).to(device)
     # net.load_state_dict(torch.load(
-    #         'saves/caro_10x10/best_004_03300.dat', map_location=lambda storage, loc: storage))
+    #         'saves/caro_10x10_1/best_002_00300.dat', map_location=lambda storage, loc: storage))
     best_net = NetWrapper(net)
 
     # optimizer = optim.SGD(net.parameters(), lr=cfg.LEARNING_RATE, momentum=0.9)
