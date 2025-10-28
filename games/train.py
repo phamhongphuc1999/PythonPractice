@@ -68,11 +68,9 @@ def self_play(
     tb_tracker.track("speed_nodes", speed_nodes, step_idx)
     sys.stdout.flush()
     buffer_len = len(replay_buffer) if replay_buffer else 0
-    sys.stdout.write(
-        "\r__index: %d/%d, Step %d, steps %3d, leaves %4d, steps/s %5.2f, leaves/s %6.2f, best_idx %d, replay %d"
+    print(
+        "....................Step %d, steps %3d, leaves %4d, steps/s %5.2f, leaves/s %6.2f, best_idx %d, replay %d"
         % (
-            0,
-            cfg.PLAY_EPISODES,
             step_idx,
             game_steps,
             game_nodes,
@@ -202,7 +200,7 @@ if __name__ == "__main__":
 
     device = "cuda" if args.cuda else "cpu"
 
-    saves_path = os.path.join("saves", args.name)
+    saves_path = os.path.join("/content/drive/MyDrive/computer_vision", args.name)
     os.makedirs(saves_path, exist_ok=True)
     writer = SummaryWriter(comment="-" + args.name)
 
@@ -236,6 +234,8 @@ if __name__ == "__main__":
             )
             step_idx += 1
 
+            print("replay_buffer: ", len(replay_buffer))
+
             if len(replay_buffer) < cfg.MIN_REPLAY_TO_TRAIN:
                 continue
 
@@ -263,7 +263,7 @@ if __name__ == "__main__":
                     torch.save(net.state_dict(), file_name)
                     mcts_store.clear()
                 else:
-                    print("Checkpoint")
+                    print("Checkpoint", win_ratio)
                     file_name = os.path.join(
                         saves_path,
                         f"checkpoint_{win_ratio}_{best_idx}_{step_idx}_{math.floor(time.time())}",
