@@ -4,3 +4,5 @@ pytest==8.4.2
 tensorboardx==2.6.4
 black==25.9.0
 onnx==1.19.1
+fastapi==0.120.1
+uvicorn==0.38.0
