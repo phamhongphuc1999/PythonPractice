@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import math
 import os
 import sys
@@ -208,8 +207,6 @@ if __name__ == "__main__":
     model_shape = game.obs_shape
 
     net = Net(input_shape=model_shape, actions_n=game.action_space).to(device)
-    # net.load_state_dict(torch.load(
-    #         'saves/caro_10x10_1/best_002_00300.dat', map_location=lambda storage, loc: storage))
     best_net = NetWrapper(net)
 
     # optimizer = optim.SGD(net.parameters(), lr=cfg.LEARNING_RATE, momentum=0.9)
@@ -219,6 +216,21 @@ if __name__ == "__main__":
     mcts_store = MCTS(game)
     step_idx = 0
     best_idx = 0
+
+    #### load game state
+    # net.load_state_dict(
+    #     torch.load(
+    #         "saves/caro_10x10_1/best_002_00300.dat",
+    #         map_location=lambda storage, loc: storage,
+    #     )
+    # )
+
+    # mcts_store.__dict__.update(
+    #     torch.load("", map_location=lambda storage, loc: storage)
+    # )
+
+    # optimizer.load_state_dict(torch.load("", map_location=lambda storage, loc: storage))
+    #### end load game state
 
     with TBMeanTracker(writer, batch_size=10) as tb_tracker:
         # Theoretically training loop can continue forever
@@ -264,8 +276,18 @@ if __name__ == "__main__":
                     mcts_store.clear()
                 else:
                     print("Checkpoint", win_ratio)
-                    file_name = os.path.join(
-                        saves_path,
-                        f"checkpoint_{win_ratio}_{best_idx}_{step_idx}_{math.floor(time.time())}",
+                    subpath_file = (
+                        f"{math.floor(time.time())}_{win_ratio}_{best_idx}_{step_idx}"
                     )
-                    torch.save(net.state_dict(), file_name)
+                    model_checkpoint_file_path = os.path.join(
+                        saves_path, f"checkpoint{subpath_file}"
+                    )
+                    optimize_save_file_path = os.path.join(
+                        saves_path, f"checkpoint_optimize{subpath_file}"
+                    )
+                    mcts_save_file_path = os.path.join(
+                        saves_path, f"checkpoint_mcts{subpath_file}"
+                    )
+                    torch.save(net.state_dict(), model_checkpoint_file_path)
+                    torch.save(optimizer.state_dict(), optimize_save_file_path)
+                    torch.save(mcts_store.__dict__, mcts_save_file_path)

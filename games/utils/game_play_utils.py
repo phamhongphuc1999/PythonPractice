@@ -1,29 +1,11 @@
 import collections
 import numpy as np
-from typing import Union, Tuple, Dict
+from typing import Union
 import torch
 
 from base_game.base_game import BaseGame
 from mcts.mcts import MCTS
 from model import Net
-
-
-def update_counts(
-    counts_dict: Dict, key: Union[str, Tuple[str, str]], counts: Tuple[int, int, int]
-) -> None:
-    """Update counts_dict with win, lose, draw from counts if key exist.
-    Else initialize new entry with 0, 0, 0
-    Key can be a string representing a model name, or a tuple representing
-    2 dueling models
-
-    Args:
-        counts_dict (Dict): Dictionary that keep track of wins, losses, and draws
-        key (Union[str, Tuple[str, str]])
-        counts (Tuple[int, int, int]): Win, Losses, and Draws
-    """
-    v = counts_dict.get(key, (0, 0, 0))
-    res = (v[0] + counts[0], v[1] + counts[1], v[2] + counts[2])
-    counts_dict[key] = res
 
 
 def play_game(
